@@ -8,6 +8,8 @@ import TableBody from "@mui/material/TableBody";
 
 import { selectTFPortfolio } from "containers/Tinkoff/selectors";
 
+//TODO norm #ffdd2d hover #fcc521
+
 const TinkoffTable = () => {
   const securities = useSelector(selectTFPortfolio);
 
