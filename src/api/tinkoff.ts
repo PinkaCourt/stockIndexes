@@ -6,7 +6,7 @@ const baseURL = "https://api-invest.tinkoff.ru/openapi";
 
 const accounts = "/user/accounts";
 const portfolio = "/portfolio";
-const market = "/market/stocks";
+const stocks = "/market/stocks";
 
 const params: RequestInit = {
   method: "GET",
@@ -28,8 +28,8 @@ export const getPortfolio = (brokerAccountId: string) => {
   return fetchRequest<Positions>(url, params);
 };
 
-export const getMarket = () => {
-  const url = baseURL + market;
+export const getAllStocks = () => {
+  const url = baseURL + stocks;
 
   return fetchRequest<Instruments>(url, params);
 };
