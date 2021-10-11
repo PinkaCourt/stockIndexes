@@ -1,28 +1,42 @@
-import { call, fork, put, select, takeEvery } from "redux-saga/effects";
+import { put, select, takeEvery } from "redux-saga/effects";
 
-//import { getBrokerAccountId } from "api";
-//import * as A from "store/actions";
-//import * as S from "store/selectors";
-//import * as T from "store/types";
-/*
-function* getTFAccountId() {
-  const { payload } = yield call(getBrokerAccountId);
+import { weightStoksInPortfolio } from "utils";
+import { HUNDRED_PERCENT } from "store/constants";
+import { imoexBase } from "containers/Moex/data";
+import { selectStocsCapitalization } from "containers/Tinkoff/selectors";
+import { setTFPortfolio } from "containers/Tinkoff/actions";
+import * as A from "./actions";
+import * as T from "./types";
 
-  console.log(payload);
+function* getMoexStoks({ payload }: ReturnType<typeof setTFPortfolio>) {
+  //const {balance, isin, name, averagePositionPrice: {currency, value}} = payload
 
-  if (payload) {
-    console.log(payload.accounts[0].brokerAccountId);
-    yield put(A.setTFAccountId(payload.accounts[0].brokerAccountId));
-  }
-}*/
+  const stocs: ReturnType<typeof selectStocsCapitalization> = yield select(
+    selectStocsCapitalization
+  );
 
-export default function* moexSaga() {
-  //moexWatcher
-  //yield fork(getTFAccountId);
-  // yield takeEvery(A.authorizationUser, authorizationUser);
-  // yield takeEvery(A.registerUser, registerUser);
-  // yield takeEvery(A.updateUserAvatar, updateUserAvatar);
-  // yield takeEvery(A.updateUserName, updateUserName);
-  // yield takeEvery(A.getUserProfile, getUserProfile);
-  // yield takeEvery(A.getUserData, getUserData);
+  const ruStocsCapital = stocs ? stocs.RUB : 0;
+
+  const stoksMap = imoexBase.reduce((accum, current) => {
+    accum[current.ticker] = {
+      ...payload[current.ticker],
+      balance: payload[current.ticker]?.balance || "0",
+      isin: payload[current.ticker]?.isin || "",
+      name: payload[current.ticker]?.name || current.nameEn,
+      weight: (current.weight * HUNDRED_PERCENT).toFixed(2),
+      weightInPortfolio: weightStoksInPortfolio(
+        ruStocsCapital,
+        payload[current.ticker]?.averagePositionPrice.value,
+        payload[current.ticker]?.balance
+      ),
+      bye: 0,
+    };
+    return accum;
+  }, {} as T.StokMap);
+
+  yield put(A.setStoksMap(stoksMap));
+}
+
+export default function* moexWatcher() {
+  yield takeEvery(setTFPortfolio, getMoexStoks);
 }
