@@ -1,42 +1,40 @@
-import { put, select, takeEvery } from "redux-saga/effects";
+import { call, fork, put, takeEvery } from "redux-saga/effects";
 
-import { weightStoksInPortfolio } from "utils";
-import { HUNDRED_PERCENT } from "store/constants";
-import { imoexBase } from "containers/Moex/data";
-import { selectStocsCapitalization } from "containers/Tinkoff/selectors";
-import { setTFPortfolio } from "containers/Tinkoff/actions";
+import { getMoexStocks, getMoexAllStocksInfo } from "api/moex";
+import { normalizeResponse } from "common/utils";
 import * as A from "./actions";
+import { MOEX15 } from "./constants";
 import * as T from "./types";
 
-function* getMoexStoks({ payload }: ReturnType<typeof setTFPortfolio>) {
-  //const {balance, isin, name, averagePositionPrice: {currency, value}} = payload
+function* getAllStocksInfo() {
+  const { securities }: T.Securities = yield call(getMoexAllStocksInfo);
 
-  const stocs: ReturnType<typeof selectStocsCapitalization> = yield select(
-    selectStocsCapitalization
-  );
+  const allSecuritiesMoexInfo: T.MoexIndexStockInfo[] =
+    normalizeResponse(securities);
 
-  const ruStocsCapital = stocs ? stocs.RUB : 0;
-
-  const stoksMap = imoexBase.reduce((accum, current) => {
-    accum[current.ticker] = {
-      ...payload[current.ticker],
-      balance: payload[current.ticker]?.balance || "0",
-      isin: payload[current.ticker]?.isin || "",
-      name: payload[current.ticker]?.name || current.nameEn,
-      weight: (current.weight * HUNDRED_PERCENT).toFixed(2),
-      weightInPortfolio: weightStoksInPortfolio(
-        ruStocsCapital,
-        payload[current.ticker]?.averagePositionPrice.value,
-        payload[current.ticker]?.balance
-      ),
-      bye: 0,
-    };
+  const MoexSecuritiesMap = allSecuritiesMoexInfo.reduce((accum, current) => {
+    accum[current.SECID] = current;
     return accum;
-  }, {} as T.StokMap);
+  }, {} as T.MoexSecuritiesMap);
 
-  yield put(A.setStoksMap(stoksMap));
+  yield put(A.setAllStocksInfo(MoexSecuritiesMap));
+  yield put(A.getStocksMRBC());
+}
+
+function* getMRBCStocks() {
+  const { analytics }: T.Analytics = yield call(getMoexStocks, MOEX15);
+
+  const entryMRBCStock: T.entryMoexIndexStock[] = normalizeResponse(analytics);
+
+  const stocksMRBCMap = entryMRBCStock.reduce((accum, current) => {
+    accum[current.ticker] = current;
+    return accum;
+  }, {} as T.MoexStockMap);
+
+  yield put(A.setStocksMRBC(stocksMRBCMap));
 }
 
 export default function* moexWatcher() {
-  yield takeEvery(setTFPortfolio, getMoexStoks);
+  yield fork(getAllStocksInfo);
+  yield takeEvery(A.getStocksMRBC, getMRBCStocks);
 }
