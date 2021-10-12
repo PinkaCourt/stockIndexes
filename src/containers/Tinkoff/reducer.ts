@@ -4,12 +4,12 @@ import * as T from "./types";
 
 export interface InitState {
   brokerAccountId: string;
-  portfolio: T.Position[];
+  portfolio: T.PositionMap | null;
 }
 
 const initState: InitState = {
   brokerAccountId: "",
-  portfolio: [],
+  portfolio: null,
 };
 
 export default createReducer(initState, (builder) => {

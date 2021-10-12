@@ -1,3 +1,5 @@
+import { InstrumentType } from "common/types";
+
 export type Status = "Ok" | "Error";
 
 export interface DataTF {
@@ -35,13 +37,16 @@ export interface Position {
   figi: string; //like BBG000R607Y3
   ticker: string; //like PLZL
   isin: string; //like RU000A0JNAA8
-  //TODO type all type
-  instrumentType: "Stock" | "Bond" | "Etf" | "Currency";
+  instrumentType: InstrumentType;
   balance: string; //like 10
   lots: string; //like 1
   expectedYield: Price;
   averagePositionPrice: Price; // + or -
   name: string; //like Полюс Золото
+}
+
+export interface PositionMap {
+  [key: string]: Position;
 }
 
 export interface Price {

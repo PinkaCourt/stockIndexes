@@ -5,7 +5,7 @@ export const getTFAccountId = createAction("getTFAccountId");
 export const setTFAccountId = createAction<string>("setTFAccountId");
 
 export const getTFPortfolio = createAction<string>("getTFPortfolio");
-export const setTFPortfolio = createAction<T.Position[]>("setTFPortfolio");
+export const setTFPortfolio = createAction<T.PositionMap>("setTFPortfolio");
 
 export const A = createAction("A");
 
