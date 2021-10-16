@@ -1,16 +1,16 @@
 import { createSelector } from "reselect";
 
-import { toFloatCapital } from "common/utils";
-import { STOCK } from "common/constants";
-import { RootState } from "store/store";
+import { STOCK, RUB } from "common/constants";
 import { PortfolioCapitalization } from "common/types";
+import { toFloatCapital, weightStocksInPortfolio } from "common/utils";
+import { RootState } from "store/store";
 import * as T from "./types";
 
 export const selectTFBrokerAccountId = (state: RootState) =>
   state.tinkoff.brokerAccountId;
 export const selectTFPortfolio = (state: RootState) => state.tinkoff.portfolio;
 
-export const selectStocsCapitalization = createSelector(
+export const selectStockCapitalization = createSelector(
   selectTFPortfolio,
   (securities) => {
     if (!securities) {
@@ -32,8 +32,42 @@ export const selectStocsCapitalization = createSelector(
   }
 );
 
+export const selectRuStocksWithWeigh = createSelector(
+  selectTFPortfolio,
+  selectStockCapitalization,
+  (securities, stocksCapital) => {
+    if (!securities) {
+      return;
+    }
+    const ruStocksCapital = stocksCapital ? stocksCapital.RUB : 0;
+
+    const ruStocks = Object.values(securities).filter(
+      (stock) =>
+        stock.instrumentType === STOCK &&
+        stock.averagePositionPrice.currency === RUB
+    );
+
+    const ruStocksWeight = ruStocks.map((stock) => {
+      return {
+        ...stock,
+        weightInPortfolio: weightStocksInPortfolio(
+          ruStocksCapital,
+          stock.averagePositionPrice.value,
+          stock.balance
+        ),
+      };
+    });
+
+    const ruStocksWeightMap = Object.fromEntries(
+      ruStocksWeight.map((stock) => [stock.ticker, stock])
+    );
+
+    return ruStocksWeightMap;
+  }
+);
+
 export const selectTinkoffState = {
   brokerAccountId: selectTFBrokerAccountId,
   portfolio: selectTFPortfolio,
-  portfolioCapitalization: selectStocsCapitalization,
+  portfolioCapitalization: selectStockCapitalization,
 };
