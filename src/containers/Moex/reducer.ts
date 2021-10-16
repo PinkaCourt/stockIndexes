@@ -3,15 +3,25 @@ import * as A from "./actions";
 import * as T from "./types";
 
 export interface InitState {
-  stocks: T.StokMap | null;
+  stocksMRBC: T.MoexStockMap | null;
+  allStocksInfo: T.MoexSecuritiesMap | null;
+  expectedStocksWeight: T.ExpectedStocksWeight | null;
 }
 
 const initState: InitState = {
-  stocks: null,
+  stocksMRBC: null,
+  allStocksInfo: null,
+  expectedStocksWeight: null,
 };
 
 export default createReducer(initState, (builder) => {
-  builder.addCase(A.setStoksMap, (state, { payload }) => {
-    state.stocks = payload;
+  builder.addCase(A.setStocksMRBC, (state, { payload }) => {
+    state.stocksMRBC = payload;
+  });
+  builder.addCase(A.setAllStocksInfo, (state, { payload }) => {
+    state.allStocksInfo = payload;
+  });
+  builder.addCase(A.setExpectedStocksWeight, (state, { payload }) => {
+    state.expectedStocksWeight = payload;
   });
 });
