@@ -7,6 +7,11 @@ export const setTFAccountId = createAction<string>("setTFAccountId");
 export const getTFPortfolio = createAction<string>("getTFPortfolio");
 export const setTFPortfolio = createAction<T.PositionMap>("setTFPortfolio");
 
+export const getAllStocks = createAction("getAllStocks");
+export const setAllStocks = createAction<T.InstrumentMap>("setAllStocks");
+
+export const tinkoffIsDone = createAction("tinkoffDone");
+
 export const A = createAction("A");
 
 export const B = createAction("B");
