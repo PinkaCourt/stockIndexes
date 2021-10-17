@@ -5,11 +5,15 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
+import TableFooter from "@mui/material/TableFooter";
 
-import { selectStocksMRBCFull } from "containers/Moex/selectors";
+import { RU_WISHED_PORTFOLIO } from "common/constants";
+import { selectExpectedStocksWeight } from "containers/Moex/selectors";
+import { selectStockCapitalization } from "containers/Tinkoff/selectors";
 
 const Moex = () => {
-  const securities = useSelector(selectStocksMRBCFull);
+  const securities = useSelector(selectExpectedStocksWeight);
+  const stockCapitalization = useSelector(selectStockCapitalization);
 
   if (!securities) {
     return null;
@@ -40,6 +44,9 @@ const Moex = () => {
             isin,
             stockCapitalization,
             weight,
+            weightInPortfolio,
+            balance,
+            toBuy,
           }) => (
             <TableRow key={ticker} hover>
               <TableCell>{shortnames}</TableCell>
@@ -49,10 +56,27 @@ const Moex = () => {
               <TableCell>{prevPrice}</TableCell>
               <TableCell>{stockCapitalization}</TableCell>
               <TableCell>{weight}</TableCell>
+              <TableCell>{weightInPortfolio}</TableCell>
+              <TableCell>{balance}</TableCell>
+              <TableCell>{toBuy}</TableCell>
             </TableRow>
           )
         )}
       </TableBody>
+      <TableFooter>
+        <TableRow>
+          <TableCell />
+          <TableCell />
+          <TableCell />
+          <TableCell />
+          <TableCell />
+          <TableCell />
+          <TableCell />
+          <TableCell />
+          <TableCell>{stockCapitalization?.RUB}</TableCell>
+          <TableCell>{RU_WISHED_PORTFOLIO}</TableCell>
+        </TableRow>
+      </TableFooter>
     </Table>
   );
 };
