@@ -1,9 +1,12 @@
-import { call, fork, put, takeEvery } from "redux-saga/effects";
+import { call, fork, put, select, take, takeEvery } from "redux-saga/effects";
 
 import { getMoexStocks, getMoexAllStocksInfo } from "api/moex";
-import { normalizeResponse } from "common/utils";
+import { normalizeResponse, buyAtWishedPortfolio } from "common/utils";
+import { selectRuStocksWithWeigh } from "containers/Tinkoff/selectors";
+import { tinkoffIsDone } from "containers/Tinkoff/actions";
 import * as A from "./actions";
 import { MOEX15 } from "./constants";
+import { selectStocksMRBCFull } from "./selectors";
 import * as T from "./types";
 
 function* getAllStocksInfo() {
@@ -32,9 +35,46 @@ function* getMRBCStocks() {
   }, {} as T.MoexStockMap);
 
   yield put(A.setStocksMRBC(stocksMRBCMap));
+  yield put(A.getExpectedStocksWeight());
+}
+
+function* displayExpectedStocksWeight() {
+  yield take(tinkoffIsDone);
+
+  const ruStocksWithWeigh: ReturnType<typeof selectRuStocksWithWeigh> =
+    yield select(selectRuStocksWithWeigh);
+
+  const stocksMRBCFull: ReturnType<typeof selectStocksMRBCFull> = yield select(
+    selectStocksMRBCFull
+  );
+
+  if (!ruStocksWithWeigh || !stocksMRBCFull) {
+    return;
+  }
+
+  const StocksMRBCFullMap = Object.values(stocksMRBCFull).reduce(
+    (accum, current) => {
+      accum[current.ticker] = {
+        ...current,
+        weightInPortfolio:
+          ruStocksWithWeigh[current.ticker]?.weightInPortfolio || 0,
+        balance: ruStocksWithWeigh[current.ticker]?.balance || "0",
+        toBuy: buyAtWishedPortfolio(
+          current.weight,
+          current.prevPrice,
+          ruStocksWithWeigh[current.ticker]?.balance
+        ),
+      };
+      return accum;
+    },
+    {} as T.ExpectedStocksWeight
+  );
+
+  yield put(A.setExpectedStocksWeight(StocksMRBCFullMap));
 }
 
 export default function* moexWatcher() {
   yield fork(getAllStocksInfo);
   yield takeEvery(A.getStocksMRBC, getMRBCStocks);
+  yield takeEvery(A.getExpectedStocksWeight, displayExpectedStocksWeight);
 }
