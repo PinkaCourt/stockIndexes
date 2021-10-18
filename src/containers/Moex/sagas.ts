@@ -1,28 +1,80 @@
-import { call, fork, put, select, takeEvery } from "redux-saga/effects";
+import { call, fork, put, select, take, takeEvery } from "redux-saga/effects";
 
-//import { getBrokerAccountId } from "api";
-//import * as A from "store/actions";
-//import * as S from "store/selectors";
-//import * as T from "store/types";
-/*
-function* getTFAccountId() {
-  const { payload } = yield call(getBrokerAccountId);
+import { getMoexStocks, getMoexAllStocksInfo } from "api/moex";
+import { normalizeResponse, buyAtWishedPortfolio } from "common/utils";
+import { selectRuStocksWithWeigh } from "containers/Tinkoff/selectors";
+import { tinkoffIsDone } from "containers/Tinkoff/actions";
+import * as A from "./actions";
+import { MOEX15 } from "./constants";
+import { selectStocksMRBCFull } from "./selectors";
+import * as T from "./types";
 
-  console.log(payload);
+function* getAllStocksInfo() {
+  const { securities }: T.Securities = yield call(getMoexAllStocksInfo);
 
-  if (payload) {
-    console.log(payload.accounts[0].brokerAccountId);
-    yield put(A.setTFAccountId(payload.accounts[0].brokerAccountId));
+  const allSecuritiesMoexInfo: T.MoexIndexStockInfo[] =
+    normalizeResponse(securities);
+
+  const MoexSecuritiesMap = allSecuritiesMoexInfo.reduce((accum, current) => {
+    accum[current.SECID] = current;
+    return accum;
+  }, {} as T.MoexSecuritiesMap);
+
+  yield put(A.setAllStocksInfo(MoexSecuritiesMap));
+  yield put(A.getStocksMRBC());
+}
+
+function* getMRBCStocks() {
+  const { analytics }: T.Analytics = yield call(getMoexStocks, MOEX15);
+
+  const entryMRBCStock: T.entryMoexIndexStock[] = normalizeResponse(analytics);
+
+  const stocksMRBCMap = entryMRBCStock.reduce((accum, current) => {
+    accum[current.ticker] = current;
+    return accum;
+  }, {} as T.MoexStockMap);
+
+  yield put(A.setStocksMRBC(stocksMRBCMap));
+  yield put(A.getExpectedStocksWeight());
+}
+
+function* displayExpectedStocksWeight() {
+  yield take(tinkoffIsDone);
+
+  const ruStocksWithWeigh: ReturnType<typeof selectRuStocksWithWeigh> =
+    yield select(selectRuStocksWithWeigh);
+
+  const stocksMRBCFull: ReturnType<typeof selectStocksMRBCFull> = yield select(
+    selectStocksMRBCFull
+  );
+
+  if (!ruStocksWithWeigh || !stocksMRBCFull) {
+    return;
   }
-}*/
 
-export default function* moexSaga() {
-  //moexWatcher
-  //yield fork(getTFAccountId);
-  // yield takeEvery(A.authorizationUser, authorizationUser);
-  // yield takeEvery(A.registerUser, registerUser);
-  // yield takeEvery(A.updateUserAvatar, updateUserAvatar);
-  // yield takeEvery(A.updateUserName, updateUserName);
-  // yield takeEvery(A.getUserProfile, getUserProfile);
-  // yield takeEvery(A.getUserData, getUserData);
+  const StocksMRBCFullMap = Object.values(stocksMRBCFull).reduce(
+    (accum, current) => {
+      accum[current.ticker] = {
+        ...current,
+        weightInPortfolio:
+          ruStocksWithWeigh[current.ticker]?.weightInPortfolio || 0,
+        balance: ruStocksWithWeigh[current.ticker]?.balance || "0",
+        toBuy: buyAtWishedPortfolio(
+          current.weight,
+          current.prevPrice,
+          ruStocksWithWeigh[current.ticker]?.balance
+        ),
+      };
+      return accum;
+    },
+    {} as T.ExpectedStocksWeight
+  );
+
+  yield put(A.setExpectedStocksWeight(StocksMRBCFullMap));
+}
+
+export default function* moexWatcher() {
+  yield fork(getAllStocksInfo);
+  yield takeEvery(A.getStocksMRBC, getMRBCStocks);
+  yield takeEvery(A.getExpectedStocksWeight, displayExpectedStocksWeight);
 }

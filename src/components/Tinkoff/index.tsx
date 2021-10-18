@@ -13,6 +13,10 @@ import { selectTFPortfolio } from "containers/Tinkoff/selectors";
 const TinkoffTable = () => {
   const securities = useSelector(selectTFPortfolio);
 
+  if (!securities) {
+    return null;
+  }
+
   return (
     <Table size="small" stickyHeader>
       <TableHead>
@@ -22,24 +26,33 @@ const TinkoffTable = () => {
           <TableCell>Количество, шт</TableCell>
           <TableCell>Количество лотов</TableCell>
           <TableCell>Oжидаемая доходность</TableCell>
-          <TableCell>Средняя цена Позиции</TableCell>
+          <TableCell>Средняя цена позиции</TableCell>
         </TableRow>
       </TableHead>
       <TableBody>
-        {securities.map((security) => (
-          <TableRow
-            key={security.name}
-            hover
-            //sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-          >
-            <TableCell>{security.name}</TableCell>
-            <TableCell>{security.ticker}</TableCell>
-            <TableCell>{security.balance}</TableCell>
-            <TableCell>{security.lots}</TableCell>
-            <TableCell>{security.expectedYield.value}</TableCell>
-            <TableCell>{security.averagePositionPrice.value}</TableCell>
-          </TableRow>
-        ))}
+        {Object.values(securities).map(
+          ({
+            name,
+            ticker,
+            balance,
+            lots,
+            expectedYield,
+            averagePositionPrice,
+          }) => (
+            <TableRow key={name} hover>
+              <TableCell>{name}</TableCell>
+              <TableCell>{ticker}</TableCell>
+              <TableCell>{balance}</TableCell>
+              <TableCell>{lots}</TableCell>
+              <TableCell>
+                {expectedYield.value}, {expectedYield.currency}
+              </TableCell>
+              <TableCell>
+                {averagePositionPrice.value}, {averagePositionPrice.currency}
+              </TableCell>
+            </TableRow>
+          )
+        )}
       </TableBody>
     </Table>
   );

@@ -1,9 +1,10 @@
 import { DataTF } from "containers/Tinkoff/types";
+import { DataMOEX } from "containers/Moex/types";
 
 export type RestType = "GET" | "POST";
 
 export interface Data {
-  data: DataTF;
+  data: DataTF | DataMOEX;
 }
 
 export interface responseOptions {
@@ -18,14 +19,8 @@ export interface ErrorRequest {
   messageKey: string;
 }
 
-export interface ErrorResponse {
-  error: ErrorRequest; //FormattedMessageError;
-  data: undefined; //| Data;
-}
-
 export interface SuccessResponse<Data> {
   data: Data;
-  // error: undefined;
 }
 
 export type ReturnTypePromise<T extends (...args: any) => any> =
