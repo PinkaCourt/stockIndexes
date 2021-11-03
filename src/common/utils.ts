@@ -1,5 +1,5 @@
 import { MoexResponseData } from "containers/Moex/types";
-import { HUNDRED_PERCENT, RU_WISHED_PORTFOLIO } from "./constants";
+import { HUNDRED_PERCENT } from "./constants";
 
 export const toFloatCapital = (price: number, numberStocks: string) => {
   return parseFloat((price * Number(numberStocks)).toFixed(2));
@@ -62,12 +62,12 @@ export const getSecurityCapitalization = (price: number, number: number) => {
 };
 
 export const buyAtWishedPortfolio = (
+  wishedPortfolio: number,
   weight: number,
   price: number,
   balance: string = "0"
 ) => {
   return (
-    Math.round(((RU_WISHED_PORTFOLIO * weight) / price) * 0.01) -
-    Number(balance)
+    Math.round(((wishedPortfolio * weight) / price) * 0.01) - Number(balance)
   );
 };
