@@ -7,13 +7,15 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
 
-import { RU_WISHED_PORTFOLIO } from "common/constants";
 import { selectExpectedStocksWeight } from "containers/Moex/selectors";
 import { selectStockCapitalization } from "containers/Tinkoff/selectors";
+import { selectRuPortfolio } from "containers/UserData/selectors";
 
 const Moex = () => {
   const securities = useSelector(selectExpectedStocksWeight);
   const stockCapitalization = useSelector(selectStockCapitalization);
+
+  const ruPortfolio = useSelector(selectRuPortfolio);
 
   if (!securities) {
     return null;
@@ -74,7 +76,7 @@ const Moex = () => {
           <TableCell />
           <TableCell />
           <TableCell>{stockCapitalization?.RUB}</TableCell>
-          <TableCell>{RU_WISHED_PORTFOLIO}</TableCell>
+          <TableCell>{ruPortfolio}</TableCell>
         </TableRow>
       </TableFooter>
     </Table>
