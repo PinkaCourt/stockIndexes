@@ -16,14 +16,6 @@ export function deserialize(response: Response) {
   return handleBodyParse(response.json());
 }
 
-export function errorParse({ name, message }: Error) {
-  const responseError = { name, message };
-
-  throw responseError;
-
-  return responseError;
-}
-
 function deriveDataFromJson<T>(data: { payload: T } | T): T {
   if ("payload" in data) {
     return data.payload;
@@ -32,11 +24,11 @@ function deriveDataFromJson<T>(data: { payload: T } | T): T {
   return data;
 }
 
-export function fetchRequest<T>(
+export function fetchRequest<Response>(
   url: string,
   options: RequestInit
-): Promise<Data | ErrorRequest | Error> {
+): Promise<Response | Error> {
   return fetch(url, options)
     .then((response) => deserialize(response).then(deriveDataFromJson))
-    .catch((error) => errorParse(error));
+    .catch((error) => error);
 }
