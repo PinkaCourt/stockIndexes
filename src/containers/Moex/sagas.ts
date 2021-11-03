@@ -4,6 +4,7 @@ import { getMoexStocks, getMoexAllStocksInfo } from "api/moex";
 import { normalizeResponse, buyAtWishedPortfolio } from "common/utils";
 import { selectRuStocksWithWeigh } from "containers/Tinkoff/selectors";
 import { tinkoffIsDone } from "containers/Tinkoff/actions";
+import { selectRuPortfolio } from "containers/UserData/selectors";
 import * as A from "./actions";
 import { MOEX15 } from "./constants";
 import { selectStocksMRBCFull } from "./selectors";
@@ -52,6 +53,10 @@ function* displayExpectedStocksWeight() {
     return;
   }
 
+  const ruWishedPortfolio: ReturnType<typeof selectRuPortfolio> = yield select(
+    selectRuPortfolio
+  );
+
   const StocksMRBCFullMap = Object.values(stocksMRBCFull).reduce(
     (accum, current) => {
       accum[current.ticker] = {
@@ -60,6 +65,7 @@ function* displayExpectedStocksWeight() {
           ruStocksWithWeigh[current.ticker]?.weightInPortfolio || 0,
         balance: ruStocksWithWeigh[current.ticker]?.balance || "0",
         toBuy: buyAtWishedPortfolio(
+          ruWishedPortfolio,
           current.weight,
           current.prevPrice,
           ruStocksWithWeigh[current.ticker]?.balance
