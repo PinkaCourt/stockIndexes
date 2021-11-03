@@ -1,4 +1,3 @@
-import { tokenTinkoff } from "tokens";
 import { fetchRequest } from "api/utils";
 import { Accounts, Positions, Instruments } from "containers/Tinkoff/types";
 
@@ -8,28 +7,29 @@ const accounts = "/user/accounts";
 const portfolio = "/portfolio";
 const stocks = "/market/stocks";
 
-const params: RequestInit = {
-  method: "GET",
-  headers: {
-    Authorization: `Bearer ${tokenTinkoff}`,
-  },
+const params = (token: string) => {
+  return {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  };
 };
 
-export const getBrokerAccountId = () => {
+export const getBrokerAccountId = (token: string) => {
   const url = baseURL + accounts;
 
-  return fetchRequest<Accounts>(url, params);
+  return fetchRequest<Accounts>(url, params(token));
 };
 
-export const getPortfolio = (brokerAccountId: string) => {
+export const getPortfolio = (brokerAccountId: string, token: string) => {
   const keyRequest = `?brokerAccountId=${brokerAccountId}`;
   const url = baseURL + portfolio + keyRequest;
 
-  return fetchRequest<Positions>(url, params);
+  return fetchRequest<Positions>(url, params(token));
 };
 
-export const getAllStocks = () => {
+export const getAllStocks = (token: string) => {
   const url = baseURL + stocks;
 
-  return fetchRequest<Instruments>(url, params);
+  return fetchRequest<Instruments>(url, params(token));
 };
