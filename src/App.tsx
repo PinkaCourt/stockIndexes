@@ -1,15 +1,16 @@
 import React from "react";
-import { BrowserRouter, Switch, Route } from "react-router-dom";
-import { Provider } from "react-redux";
+import { withRouter } from "react-router";
+import { Switch, Route } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ThemeProvider } from "@mui/material/styles";
 
-import store from "store/store";
 import Moex from "components/Moex";
 import SP500 from "components/SP500";
 import TinkoffTable from "components/Tinkoff";
 import UserDataDialog from "components/UserDataDialog";
-
 import AppBarMui from "components/AppBarMui";
-
+import { selectTinkoffToken } from "containers/UserData/selectors";
+import { themeDF, themeTF, themeMOEX, themeSP500 } from "themes";
 import "./App.css";
 
 export const routes = {
@@ -33,27 +34,57 @@ export const routes = {
   },
 };
 
-function App() {
-  return (
-    <Provider store={store}>
-      <BrowserRouter>
-        <UserDataDialog />
-        <Route path="/">
-          <AppBarMui tabs={routes} />
-        </Route>
-        <Switch>
-          {Object.values(routes).map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              exact={route.exact}
-              component={route.component}
-            />
-          ))}
-        </Switch>
-      </BrowserRouter>
-    </Provider>
-  );
+interface Props {
+  location: { pathname: string };
 }
 
-export default App;
+const App = ({ location }: Props) => {
+  const tinkoffToken = useSelector(selectTinkoffToken);
+
+  const [openDialog, setOpenDialog] = React.useState(!Boolean(tinkoffToken));
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const themeUsed = React.useMemo(() => {
+    const { pathname } = location;
+
+    switch (pathname) {
+      case "/":
+      case routes.tinkoff.path:
+        return themeTF;
+      case routes.moex.path:
+        return themeMOEX;
+      case routes.sp500.path:
+        return themeSP500;
+      default:
+        return themeDF;
+    }
+  }, [location]);
+
+  return (
+    <ThemeProvider theme={themeUsed}>
+      <UserDataDialog open={openDialog} handleCloseDialog={handleCloseDialog} />
+      <Route path="/">
+        <AppBarMui tabs={routes} handleOpenDialog={handleOpenDialog} />
+      </Route>
+      <Switch>
+        {Object.values(routes).map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            exact={route.exact}
+            component={route.component}
+          />
+        ))}
+      </Switch>
+    </ThemeProvider>
+  );
+};
+
+export default withRouter(App);
