@@ -1,6 +1,5 @@
 import React from "react";
-import { withRouter } from "react-router";
-import { Switch, Route } from "react-router-dom";
+import { Switch, Route, useLocation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 
@@ -34,12 +33,9 @@ export const routes = {
   },
 };
 
-interface Props {
-  location: { pathname: string };
-}
-
-const App = ({ location }: Props) => {
+const App = () => {
   const tinkoffToken = useSelector(selectTinkoffToken);
+  const location = useLocation();
 
   const [openDialog, setOpenDialog] = React.useState(!Boolean(tinkoffToken));
 
@@ -87,4 +83,4 @@ const App = ({ location }: Props) => {
   );
 };
 
-export default withRouter(App);
+export default App;
