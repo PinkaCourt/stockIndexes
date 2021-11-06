@@ -13,7 +13,7 @@ function* getTFAccountId() {
 
   const { accounts } = yield call(getBrokerAccountId, token);
 
-  if (accounts) {
+  if (accounts.length > 0) {
     yield put(A.setTFAccountId(accounts[0].brokerAccountId));
     yield put(A.getTFPortfolio(accounts[0].brokerAccountId));
     yield put(A.getAllStocks());
