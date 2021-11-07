@@ -9,6 +9,8 @@ export const selectAllStocksInfo = (state: RootState) =>
   state.moex.allStocksInfo;
 export const selectExpectedStocksWeight = (state: RootState) =>
   state.moex.expectedStocksWeight;
+export const selectOrderBy = (state: RootState) => state.moex.orderBy;
+export const selectDirection = (state: RootState) => state.moex.direction;
 
 export const selectStocksMRBCFull = createSelector(
   selectStocksMRBC,
@@ -40,4 +42,6 @@ export const selectMoexState = {
   stocksMRBC: selectStocksMRBC,
   allStocksInfo: selectAllStocksInfo,
   stocksMRBCFull: selectStocksMRBCFull,
+  direction: selectDirection,
+  orderBy: selectOrderBy,
 };
