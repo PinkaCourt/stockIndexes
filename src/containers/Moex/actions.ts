@@ -1,4 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
+
+import { Direction } from "common/types";
 import * as T from "./types";
 
 export const getStocksMRBC = createAction("getStocksMRBC");
@@ -12,3 +14,6 @@ export const getExpectedStocksWeight = createAction("getExpectedStocksWeight");
 export const setExpectedStocksWeight = createAction<T.ExpectedStocksWeight>(
   "setExpectedStocksWeight"
 );
+
+export const setDirectionMRBC = createAction<Direction>("setDirectionTF");
+export const setOrderByMRBC = createAction<T.OrderByMRBC>("setOrderByTF");
