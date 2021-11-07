@@ -9,6 +9,8 @@ import * as T from "./types";
 export const selectTFBrokerAccountId = (state: RootState) =>
   state.tinkoff.brokerAccountId;
 export const selectTFPortfolio = (state: RootState) => state.tinkoff.portfolio;
+export const selectOrderBy = (state: RootState) => state.tinkoff.orderBy;
+export const selectDirection = (state: RootState) => state.tinkoff.direction;
 
 export const selectStockCapitalization = createSelector(
   selectTFPortfolio,
@@ -70,4 +72,6 @@ export const selectTinkoffState = {
   brokerAccountId: selectTFBrokerAccountId,
   portfolio: selectTFPortfolio,
   portfolioCapitalization: selectStockCapitalization,
+  direction: selectDirection,
+  orderBy: selectOrderBy,
 };
