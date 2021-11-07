@@ -28,3 +28,5 @@ export interface Route {
 export interface Routes {
   [key: string]: Route;
 }
+
+export type Direction = "asc" | "desc";
