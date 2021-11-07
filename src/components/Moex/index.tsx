@@ -7,31 +7,40 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
 
-import { RU_WISHED_PORTFOLIO } from "common/constants";
 import { selectExpectedStocksWeight } from "containers/Moex/selectors";
 import { selectStockCapitalization } from "containers/Tinkoff/selectors";
+import { selectRuPortfolio } from "containers/UserData/selectors";
 
 const Moex = () => {
   const securities = useSelector(selectExpectedStocksWeight);
   const stockCapitalization = useSelector(selectStockCapitalization);
 
+  const ruPortfolio = useSelector(selectRuPortfolio);
+
   if (!securities) {
     return null;
   }
+
+  const tableHeads = [
+    "Название эмитента",
+    "Тикер",
+    "ISIN",
+    "Всего выпущено акций",
+    "Средневзвешенная цена акции",
+    "Капитализация акций",
+    "Вес в индексе, %",
+    "Количество в портфеле, шт",
+    "Вес в портфеле, %",
+    "Купить, шт",
+  ];
+
   return (
     <Table size="small" stickyHeader>
       <TableHead>
         <TableRow>
-          <TableCell>Название эмитента</TableCell>
-          <TableCell>Тикер</TableCell>
-          <TableCell>ISIN</TableCell>
-          <TableCell>Всего выпущено акций</TableCell>
-          <TableCell>Средневзвешенная цена акции</TableCell>
-          <TableCell>Капитализация акций</TableCell>
-          <TableCell>Вес в индексе, %</TableCell>
-          <TableCell>Количество в портфеле, шт</TableCell>
-          <TableCell>Вес в портфеле, %</TableCell>
-          <TableCell>Купить, шт</TableCell>
+          {tableHeads.map((tableHead, idx) => {
+            return <TableCell key={idx}>{tableHead}</TableCell>;
+          })}
         </TableRow>
       </TableHead>
       <TableBody>
@@ -74,7 +83,7 @@ const Moex = () => {
           <TableCell />
           <TableCell />
           <TableCell>{stockCapitalization?.RUB}</TableCell>
-          <TableCell>{RU_WISHED_PORTFOLIO}</TableCell>
+          <TableCell>{ruPortfolio}</TableCell>
         </TableRow>
       </TableFooter>
     </Table>

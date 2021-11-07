@@ -8,8 +8,6 @@ import TableBody from "@mui/material/TableBody";
 
 import { selectTFPortfolio } from "containers/Tinkoff/selectors";
 
-//TODO norm #ffdd2d hover #fcc521
-
 const TinkoffTable = () => {
   const securities = useSelector(selectTFPortfolio);
 
@@ -17,16 +15,22 @@ const TinkoffTable = () => {
     return null;
   }
 
+  const tableHeads = [
+    "Название ценной бумаги",
+    "Тикер",
+    "Количество, шт",
+    "Количество лотов",
+    "Oжидаемая доходность",
+    "Средняя цена позиции",
+  ];
+
   return (
     <Table size="small" stickyHeader>
       <TableHead>
         <TableRow>
-          <TableCell>Название ценной бумаги</TableCell>
-          <TableCell>Тикер</TableCell>
-          <TableCell>Количество, шт</TableCell>
-          <TableCell>Количество лотов</TableCell>
-          <TableCell>Oжидаемая доходность</TableCell>
-          <TableCell>Средняя цена позиции</TableCell>
+          {tableHeads.map((tableHead, idx) => {
+            return <TableCell key={idx}>{tableHead}</TableCell>;
+          })}
         </TableRow>
       </TableHead>
       <TableBody>

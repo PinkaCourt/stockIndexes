@@ -1,67 +1,86 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import { Provider } from "react-redux";
-import Tabs from "@mui/material/Tabs";
-import Tab from "@mui/material/Tab";
-import AppBar from "@mui/material/AppBar";
+import { Switch, Route, useLocation } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { ThemeProvider } from "@mui/material/styles";
 
-import store from "store/store";
 import Moex from "components/Moex";
 import SP500 from "components/SP500";
 import TinkoffTable from "components/Tinkoff";
-import Total from "components/Total";
-
+import UserDataDialog from "components/UserDataDialog";
+import AppBarMui from "components/AppBarMui";
+import { selectTinkoffToken } from "containers/UserData/selectors";
+import { themeDF, themeTF, themeMOEX, themeSP500 } from "themes";
 import "./App.css";
 
 export const routes = {
-  total: {
-    path: "/",
-    exact: true,
-    component: Total,
-  },
   tinkoff: {
     path: "/tinkoff",
     exact: false,
+    label: "Tinkoff",
     component: TinkoffTable,
   },
   moex: {
     path: "/moex",
     exact: false,
+    label: "Moex",
     component: Moex,
   },
   sp500: {
     path: "/sp500",
     exact: false,
+    label: "S&P500",
     component: SP500,
   },
 };
 
-function App() {
-  return (
-    <Provider store={store}>
-      <Router>
-        <AppBar position="static">
-          <Tabs centered>
-            <Tab component="a" label="All exchanges" href="/" />
-            <Tab component="a" label="Tinkoff" href="/tinkoff" />
-            <Tab component="a" label="Moex" href="/moex" />
-            <Tab component="a" label="S&P500" href="/sp500" />
-          </Tabs>
-        </AppBar>
+const App = () => {
+  const tinkoffToken = useSelector(selectTinkoffToken);
+  const location = useLocation();
 
-        <Switch>
-          {Object.values(routes).map((route) => (
-            <Route
-              key={route.path}
-              path={route.path}
-              exact={route.exact}
-              component={route.component}
-            />
-          ))}
-        </Switch>
-      </Router>
-    </Provider>
+  const [openDialog, setOpenDialog] = React.useState(!Boolean(tinkoffToken));
+
+  const handleOpenDialog = () => {
+    setOpenDialog(true);
+  };
+
+  const handleCloseDialog = () => {
+    setOpenDialog(false);
+  };
+
+  const themeUsed = React.useMemo(() => {
+    const { pathname } = location;
+
+    switch (pathname) {
+      case "/":
+      case routes.tinkoff.path:
+        return themeTF;
+      case routes.moex.path:
+        return themeMOEX;
+      case routes.sp500.path:
+        return themeSP500;
+      default:
+        return themeDF;
+    }
+  }, [location]);
+
+  return (
+    <ThemeProvider theme={themeUsed}>
+      <UserDataDialog open={openDialog} handleCloseDialog={handleCloseDialog} />
+      <Route path="/">
+        <AppBarMui tabs={routes} handleOpenDialog={handleOpenDialog} />
+      </Route>
+      <Switch>
+        {Object.values(routes).map((route) => (
+          <Route
+            key={route.path}
+            path={route.path}
+            exact={route.exact}
+            component={route.component}
+          />
+        ))}
+      </Switch>
+    </ThemeProvider>
   );
-}
+};
 
 export default App;

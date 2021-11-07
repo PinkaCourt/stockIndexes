@@ -17,3 +17,14 @@ export type Currency =
   | typeof constants.RUB
   | typeof constants.EUR
   | typeof constants.USD;
+
+export interface Route {
+  path: string;
+  exact: boolean;
+  label: string;
+  component: () => JSX.Element | null;
+}
+
+export interface Routes {
+  [key: string]: Route;
+}

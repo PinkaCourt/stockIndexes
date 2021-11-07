@@ -1,13 +1,19 @@
-import { call, fork, put, takeEvery } from "redux-saga/effects";
+import { call, put, select, takeEvery } from "redux-saga/effects";
 
+import { selectTinkoffToken } from "containers/UserData/selectors";
+import { setTinkoffToken } from "containers/UserData/actions";
 import { getBrokerAccountId, getPortfolio, getAllStocks } from "api/tinkoff";
 import * as A from "./actions";
 import * as T from "./types";
 
 function* getTFAccountId() {
-  const { accounts } = yield call(getBrokerAccountId);
+  const token: ReturnType<typeof selectTinkoffToken> = yield select(
+    selectTinkoffToken
+  );
 
-  if (accounts) {
+  const { accounts } = yield call(getBrokerAccountId, token);
+
+  if (accounts.length > 0) {
     yield put(A.setTFAccountId(accounts[0].brokerAccountId));
     yield put(A.getTFPortfolio(accounts[0].brokerAccountId));
     yield put(A.getAllStocks());
@@ -15,7 +21,11 @@ function* getTFAccountId() {
 }
 
 function* getTFPortfolio({ payload }: ReturnType<typeof A.getTFPortfolio>) {
-  const { positions } = yield call(getPortfolio, payload);
+  const token: ReturnType<typeof selectTinkoffToken> = yield select(
+    selectTinkoffToken
+  );
+
+  const { positions } = yield call(getPortfolio, payload, token);
 
   if (positions) {
     const positionMap: T.PositionMap = positions.reduce(
@@ -31,7 +41,11 @@ function* getTFPortfolio({ payload }: ReturnType<typeof A.getTFPortfolio>) {
 }
 
 function* getAllStocksServer() {
-  const { instruments } = yield call(getAllStocks);
+  const token: ReturnType<typeof selectTinkoffToken> = yield select(
+    selectTinkoffToken
+  );
+
+  const { instruments } = yield call(getAllStocks, token);
 
   if (instruments) {
     const instrumentMap: T.InstrumentMap = instruments.reduce(
@@ -46,7 +60,7 @@ function* getAllStocksServer() {
 }
 
 export default function* tinkoffSaga() {
-  yield fork(getTFAccountId);
+  yield takeEvery(setTinkoffToken, getTFAccountId);
   yield takeEvery(A.getTFPortfolio, getTFPortfolio);
   yield takeEvery(A.getAllStocks, getAllStocksServer);
 }
