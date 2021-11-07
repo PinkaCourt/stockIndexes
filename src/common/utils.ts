@@ -1,5 +1,11 @@
-import { MoexResponseData } from "containers/Moex/types";
+import {
+  MoexResponseData,
+  OrderByMRBC,
+  StocksMRBCFull,
+} from "containers/Moex/types";
+import { OrderByTF, Position } from "containers/Tinkoff/types";
 import { HUNDRED_PERCENT } from "./constants";
+import { Direction } from "./types";
 
 export const toFloatCapital = (price: number, numberStocks: string) => {
   return parseFloat((price * Number(numberStocks)).toFixed(2));
@@ -70,4 +76,33 @@ export const buyAtWishedPortfolio = (
   return (
     Math.round(((wishedPortfolio * weight) / price) * 0.01) - Number(balance)
   );
+};
+
+export function compareFn(
+  array: Position[] | StocksMRBCFull[],
+  order: OrderByTF | OrderByMRBC,
+  direction: Direction
+) {
+  const copyArray = [...array];
+
+  let result: Position[] | StocksMRBCFull[];
+
+  const orderStr = ["name", "ticker", "shortnames", "isin"];
+
+  if (orderStr.includes(order)) {
+    result = Array.prototype.sort.call(copyArray, (a, b) => {
+      return a[order] < b[order] ? -1 : a[order] > b[order] ? 1 : 0;
+    });
+  } else {
+    result = Array.prototype.sort.call(copyArray, (a, b) => {
+      return Number(a[order]) - Number(b[order]);
+    });
+  }
+
+  return direction === "asc" ? result : result.reverse();
+}
+
+export const revertDirection = {
+  asc: "desc",
+  desc: "asc",
 };
