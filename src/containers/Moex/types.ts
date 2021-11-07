@@ -1,5 +1,3 @@
-import { PositionWeight } from "containers/Tinkoff/types";
-
 export type DataMOEX = Analytics | Securities;
 export interface Metadata {
   type: string;
@@ -86,3 +84,15 @@ export interface StocksMRBCFullMap {
 export interface ExpectedStocksWeight {
   [key: string]: StocksMRBCFull;
 }
+
+export type OrderByMRBC =
+  | "shortnames"
+  | "ticker"
+  | "issueSize"
+  | "prevPrice"
+  | "isin"
+  | "stockCapitalization"
+  | "weight"
+  | "weightInPortfolio"
+  | "balance"
+  | "toBuy";
