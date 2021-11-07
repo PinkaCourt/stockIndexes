@@ -1,4 +1,6 @@
 import { createAction } from "@reduxjs/toolkit";
+
+import { Direction } from "common/types";
 import * as T from "./types";
 
 export const getTFAccountId = createAction("getTFAccountId");
@@ -12,6 +14,5 @@ export const setAllStocks = createAction<T.InstrumentMap>("setAllStocks");
 
 export const tinkoffIsDone = createAction("tinkoffDone");
 
-export const A = createAction("A");
-
-export const B = createAction("B");
+export const setDirectionTF = createAction<Direction>("setDirectionTF");
+export const setOrderByTF = createAction<T.OrderByTF>("setOrderByTF");
