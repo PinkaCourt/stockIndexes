@@ -8,32 +8,21 @@ import TableBody from "@mui/material/TableBody";
 import TableSortLabel from "@mui/material/TableSortLabel";
 
 import { Direction } from "common/types";
-import { compareFn, revertDirection } from "common/utils";
+import { revertDirection } from "common/utils";
 import {
-  selectTFPortfolio,
   selectDirection,
   selectOrderBy,
+  selectSortedTFPortfolio,
 } from "containers/Tinkoff/selectors";
 import { setDirectionTF, setOrderByTF } from "containers/Tinkoff/actions";
-import { OrderByTF, Position } from "containers/Tinkoff/types";
+import { OrderByTF } from "containers/Tinkoff/types";
 
 const TinkoffTable = () => {
-  const securities = useSelector(selectTFPortfolio);
+  const securities = useSelector(selectSortedTFPortfolio);
   const direction = useSelector(selectDirection);
   const orderBy = useSelector(selectOrderBy);
 
   const dispatch = useDispatch();
-
-  const sortedSecurities = React.useMemo(() => {
-    if (!securities) {
-      return [];
-    }
-    return compareFn(
-      Object.values(securities),
-      orderBy,
-      direction
-    ) as Position[];
-  }, [direction, orderBy, securities]);
 
   if (!securities) {
     return null;
@@ -75,7 +64,7 @@ const TinkoffTable = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {sortedSecurities.map(
+        {securities.map(
           ({
             name,
             ticker,
