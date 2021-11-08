@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { getSecurityCapitalization } from "common/utils";
 import { RootState } from "store/store";
-import { StocksMRBCFullMap } from "./types";
+import { StocksMRBCFullMap, StocksMRBCFull } from "./types";
 
 export const selectStocksMRBC = (state: RootState) => state.moex.stocksMRBC;
 export const selectAllStocksInfo = (state: RootState) =>
@@ -38,10 +38,44 @@ export const selectStocksMRBCFull = createSelector(
   }
 );
 
+export const selectSortedStocksMRBC = createSelector(
+  [selectExpectedStocksWeight, selectOrderBy, selectDirection],
+  (securities, orderBy, direction) => {
+    if (!securities) {
+      return;
+    }
+
+    let result: StocksMRBCFull[];
+
+    const orderStr = ["shortnames", "isin"];
+
+    if (orderStr.includes(orderBy)) {
+      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
+        if (direction === "asc") {
+          return a[orderBy] < b[orderBy] ? -1 : a[orderBy] > b[orderBy] ? 1 : 0;
+        } else {
+          return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
+        }
+      });
+    } else {
+      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
+        if (direction === "asc") {
+          return Number(a[orderBy]) - Number(b[orderBy]);
+        } else {
+          return Number(b[orderBy]) - Number(a[orderBy]);
+        }
+      });
+    }
+
+    return result;
+  }
+);
+
 export const selectMoexState = {
   stocksMRBC: selectStocksMRBC,
   allStocksInfo: selectAllStocksInfo,
   stocksMRBCFull: selectStocksMRBCFull,
   direction: selectDirection,
   orderBy: selectOrderBy,
+  sortedStocksMRBC: selectSortedStocksMRBC,
 };
