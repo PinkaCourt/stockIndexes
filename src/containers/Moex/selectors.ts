@@ -47,15 +47,15 @@ export const selectSortedStocksMRBC = createSelector(
 
     let result: StocksMRBCFull[];
 
-    const orderStr = ["shortnames", "isin"];
+    const orderStr = ["shortnames", "ticker", "isin"];
 
     if (orderStr.includes(orderBy)) {
       result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
         if (direction === "asc") {
           return a[orderBy] < b[orderBy] ? -1 : a[orderBy] > b[orderBy] ? 1 : 0;
-        } else {
-          return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
         }
+
+        return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
       });
     } else {
       result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
