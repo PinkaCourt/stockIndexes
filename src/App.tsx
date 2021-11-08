@@ -14,7 +14,7 @@ import "./App.css";
 
 export const routes = {
   tinkoff: {
-    path: "/tinkoff",
+    path: "/",
     exact: false,
     label: "Tinkoff",
     component: TinkoffTable,
@@ -51,7 +51,6 @@ const App = () => {
     const { pathname } = location;
 
     switch (pathname) {
-      case "/":
       case routes.tinkoff.path:
         return themeTF;
       case routes.moex.path:
@@ -66,9 +65,7 @@ const App = () => {
   return (
     <ThemeProvider theme={themeUsed}>
       <UserDataDialog open={openDialog} handleCloseDialog={handleCloseDialog} />
-      <Route path="/">
-        <AppBarMui tabs={routes} handleOpenDialog={handleOpenDialog} />
-      </Route>
+      <AppBarMui tabs={routes} handleOpenDialog={handleOpenDialog} />
       <Switch>
         {Object.values(routes).map((route) => (
           <Route
