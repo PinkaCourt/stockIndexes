@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
-import { STOCK, RUB } from "common/constants";
-import { PortfolioCapitalization } from "common/types";
+import { STOCK, RUB, currencyMap } from "common/constants";
+import { PortfolioCapitalization, Currency } from "common/types";
 import { toFloatCapital, weightStocksInPortfolio } from "common/utils";
 import { RootState } from "store/store";
 import * as T from "./types";
@@ -79,12 +79,31 @@ export const selectSortedTFPortfolio = createSelector(
 
     const orderStr = ["name", "ticker"];
 
+    const orderCur = ["expectedYield", "averagePositionPrice"];
+
     if (orderStr.includes(orderBy)) {
       result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
         if (direction === "asc") {
           return a[orderBy] < b[orderBy] ? -1 : a[orderBy] > b[orderBy] ? 1 : 0;
+        }
+
+        return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
+      });
+    } else if (orderCur.includes(orderBy)) {
+      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
+        const aCurrency: Currency = a[orderBy].currency;
+        const bCurrency: Currency = b[orderBy].currency;
+
+        if (direction === "asc") {
+          return (
+            a[orderBy].value * currencyMap[aCurrency] -
+            b[orderBy].value * currencyMap[bCurrency]
+          );
         } else {
-          return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
+          return (
+            b[orderBy].value * currencyMap[bCurrency] -
+            a[orderBy].value * currencyMap[aCurrency]
+          );
         }
       });
     } else {
