@@ -14,7 +14,7 @@ import "./App.css";
 
 export const routes = {
   tinkoff: {
-    path: "/",
+    path: "/tinkoff",
     exact: false,
     label: "Tinkoff",
     component: TinkoffTable,
