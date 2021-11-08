@@ -68,10 +68,44 @@ export const selectRuStocksWithWeigh = createSelector(
   }
 );
 
+export const selectSortedTFPortfolio = createSelector(
+  [selectTFPortfolio, selectOrderBy, selectDirection],
+  (securities, orderBy, direction) => {
+    if (!securities) {
+      return;
+    }
+
+    let result: T.Position[];
+
+    const orderStr = ["name", "ticker"];
+
+    if (orderStr.includes(orderBy)) {
+      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
+        if (direction === "asc") {
+          return a[orderBy] < b[orderBy] ? -1 : a[orderBy] > b[orderBy] ? 1 : 0;
+        } else {
+          return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
+        }
+      });
+    } else {
+      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
+        if (direction === "asc") {
+          return Number(a[orderBy]) - Number(b[orderBy]);
+        } else {
+          return Number(b[orderBy]) - Number(a[orderBy]);
+        }
+      });
+    }
+
+    return result;
+  }
+);
+
 export const selectTinkoffState = {
   brokerAccountId: selectTFBrokerAccountId,
   portfolio: selectTFPortfolio,
   portfolioCapitalization: selectStockCapitalization,
   direction: selectDirection,
   orderBy: selectOrderBy,
+  sortedTFPortfolio: selectSortedTFPortfolio,
 };
