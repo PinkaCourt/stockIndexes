@@ -9,19 +9,19 @@ import TableFooter from "@mui/material/TableFooter";
 import TableSortLabel from "@mui/material/TableSortLabel";
 
 import { Direction } from "common/types";
-import { compareFn, revertDirection } from "common/utils";
+import { revertDirection } from "common/utils";
 import {
   selectDirection,
   selectOrderBy,
-  selectExpectedStocksWeight,
+  selectSortedStocksMRBC,
 } from "containers/Moex/selectors";
 import { setDirectionMRBC, setOrderByMRBC } from "containers/Moex/actions";
-import { OrderByMRBC, StocksMRBCFull } from "containers/Moex/types";
+import { OrderByMRBC } from "containers/Moex/types";
 import { selectStockCapitalization } from "containers/Tinkoff/selectors";
 import { selectRuPortfolio } from "containers/UserData/selectors";
 
 const Moex = () => {
-  const securities = useSelector(selectExpectedStocksWeight);
+  const sortedStocksMRBC = useSelector(selectSortedStocksMRBC);
   const stockCapitalization = useSelector(selectStockCapitalization);
   const direction = useSelector(selectDirection);
   const orderBy = useSelector(selectOrderBy);
@@ -29,18 +29,7 @@ const Moex = () => {
 
   const dispatch = useDispatch();
 
-  const sortedSecurities = React.useMemo(() => {
-    if (!securities) {
-      return [];
-    }
-    return compareFn(
-      Object.values(securities),
-      orderBy,
-      direction
-    ) as StocksMRBCFull[];
-  }, [direction, orderBy, securities]);
-
-  if (!securities) {
+  if (!sortedStocksMRBC) {
     return null;
   }
 
@@ -84,7 +73,7 @@ const Moex = () => {
         </TableRow>
       </TableHead>
       <TableBody>
-        {sortedSecurities.map(
+        {sortedStocksMRBC.map(
           ({
             shortnames,
             ticker,
