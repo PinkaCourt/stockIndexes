@@ -1,8 +1,9 @@
 import { createSelector } from "reselect";
 
-import { STOCK, RUB, currencyMap } from "common/constants";
+import { STOCK, RUB } from "common/constants";
 import { PortfolioCapitalization, Currency } from "common/types";
 import { toFloatCapital, weightStocksInPortfolio } from "common/utils";
+import { selectRates } from "containers/exchangeRates/selectors";
 import { RootState } from "store/store";
 import * as T from "./types";
 
@@ -69,8 +70,8 @@ export const selectRuStocksWithWeigh = createSelector(
 );
 
 export const selectSortedTFPortfolio = createSelector(
-  [selectTFPortfolio, selectOrderBy, selectDirection],
-  (securities, orderBy, direction) => {
+  [selectTFPortfolio, selectOrderBy, selectDirection, selectRates],
+  (securities, orderBy, direction, rates) => {
     if (!securities) {
       return;
     }
@@ -89,12 +90,12 @@ export const selectSortedTFPortfolio = createSelector(
       }
 
       if (orderBy === "expectedYield" || orderBy === "averagePositionPrice") {
-        const aCurrency: Currency = left[orderBy].currency;
-        const bCurrency: Currency = right[orderBy].currency;
+        const currencyL: Currency = left[orderBy].currency;
+        const currencyR: Currency = right[orderBy].currency;
 
         return (
-          Number(left[orderBy].value * currencyMap[aCurrency]) -
-          Number(right[orderBy].value * currencyMap[bCurrency])
+          Number(left[orderBy].value * rates[currencyL]) -
+          Number(right[orderBy].value * rates[currencyR])
         );
       }
 
