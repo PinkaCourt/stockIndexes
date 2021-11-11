@@ -68,10 +68,4 @@ export interface PositionWeight extends Position {
   weightInPortfolio: number;
 }
 
-export type OrderByTF =
-  | "name"
-  | "ticker"
-  | "balance"
-  | "lots"
-  | "expectedYield"
-  | "averagePositionPrice";
+export type OrderByTF = keyof Position;
