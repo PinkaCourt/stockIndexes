@@ -75,48 +75,31 @@ export const selectSortedTFPortfolio = createSelector(
       return;
     }
 
-    let result: T.Position[];
+    return Object.values(securities).sort((a, b) => {
+      let left = a,
+        right = b;
 
-    const orderStr = ["name", "ticker"];
+      if (direction === "desc") {
+        left = b;
+        right = a;
+      }
 
-    const orderCur = ["expectedYield", "averagePositionPrice"];
+      if (orderBy === "name" || orderBy === "ticker") {
+        return left[orderBy].localeCompare(right[orderBy]);
+      }
 
-    if (orderStr.includes(orderBy)) {
-      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
-        if (direction === "asc") {
-          return a[orderBy] < b[orderBy] ? -1 : a[orderBy] > b[orderBy] ? 1 : 0;
-        }
+      if (orderBy === "expectedYield" || orderBy === "averagePositionPrice") {
+        const aCurrency: Currency = left[orderBy].currency;
+        const bCurrency: Currency = right[orderBy].currency;
 
-        return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
-      });
-    } else if (orderCur.includes(orderBy)) {
-      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
-        const aCurrency: Currency = a[orderBy].currency;
-        const bCurrency: Currency = b[orderBy].currency;
+        return (
+          Number(left[orderBy].value * currencyMap[aCurrency]) -
+          Number(right[orderBy].value * currencyMap[bCurrency])
+        );
+      }
 
-        if (direction === "asc") {
-          return (
-            a[orderBy].value * currencyMap[aCurrency] -
-            b[orderBy].value * currencyMap[bCurrency]
-          );
-        } else {
-          return (
-            b[orderBy].value * currencyMap[bCurrency] -
-            a[orderBy].value * currencyMap[aCurrency]
-          );
-        }
-      });
-    } else {
-      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
-        if (direction === "asc") {
-          return Number(a[orderBy]) - Number(b[orderBy]);
-        } else {
-          return Number(b[orderBy]) - Number(a[orderBy]);
-        }
-      });
-    }
-
-    return result;
+      return Number(left[orderBy]) - Number(right[orderBy]);
+    });
   }
 );
 
