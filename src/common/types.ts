@@ -30,3 +30,23 @@ export interface Routes {
 }
 
 export type Direction = "asc" | "desc";
+
+export interface RateInfo {
+  CharCode: string;
+  ID: string;
+  Name: string;
+  Nominal: number;
+  NumCode: string;
+  Previous: number;
+  Value: number;
+}
+
+export interface RawRates {
+  Date: string;
+  PreviousDate: string;
+  PreviousURL: string;
+  Timestamp: string;
+  Valute: {
+    [key: string]: RateInfo;
+  };
+}
