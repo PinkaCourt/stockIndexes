@@ -85,14 +85,4 @@ export interface ExpectedStocksWeight {
   [key: string]: StocksMRBCFull;
 }
 
-export type OrderByMRBC =
-  | "shortnames"
-  | "ticker"
-  | "issueSize"
-  | "prevPrice"
-  | "isin"
-  | "stockCapitalization"
-  | "weight"
-  | "weightInPortfolio"
-  | "balance"
-  | "toBuy";
+export type OrderByMRBC = keyof StocksMRBCFull;
