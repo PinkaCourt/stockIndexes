@@ -2,7 +2,7 @@ import { createSelector } from "reselect";
 
 import { getSecurityCapitalization } from "common/utils";
 import { RootState } from "store/store";
-import { StocksMRBCFullMap, StocksMRBCFull } from "./types";
+import { StocksMRBCFullMap } from "./types";
 
 export const selectStocksMRBC = (state: RootState) => state.moex.stocksMRBC;
 export const selectAllStocksInfo = (state: RootState) =>
@@ -45,29 +45,25 @@ export const selectSortedStocksMRBC = createSelector(
       return;
     }
 
-    let result: StocksMRBCFull[];
-
     const orderStr = ["shortnames", "ticker", "isin"];
 
-    if (orderStr.includes(orderBy)) {
-      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
-        if (direction === "asc") {
-          return a[orderBy] < b[orderBy] ? -1 : a[orderBy] > b[orderBy] ? 1 : 0;
-        }
+    return Object.values(securities).sort((a, b) => {
+      let left = a,
+        right = b;
 
-        return a[orderBy] > b[orderBy] ? -1 : a[orderBy] < b[orderBy] ? 1 : 0;
-      });
-    } else {
-      result = Array.prototype.sort.call(Object.values(securities), (a, b) => {
-        if (direction === "asc") {
-          return Number(a[orderBy]) - Number(b[orderBy]);
-        } else {
-          return Number(b[orderBy]) - Number(a[orderBy]);
-        }
-      });
-    }
+      if (direction === "desc") {
+        left = b;
+        right = a;
+      }
 
-    return result;
+      if (orderStr.includes(orderBy)) {
+        return (left[orderBy] as string).localeCompare(
+          right[orderBy] as string
+        );
+      }
+
+      return Number(left[orderBy]) - Number(right[orderBy]);
+    });
   }
 );
 
