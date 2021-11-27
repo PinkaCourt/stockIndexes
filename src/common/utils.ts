@@ -71,3 +71,8 @@ export const buyAtWishedPortfolio = (
     Math.round(((wishedPortfolio * weight) / price) * 0.01) - Number(balance)
   );
 };
+
+export const revertDirection = {
+  asc: "desc",
+  desc: "asc",
+};

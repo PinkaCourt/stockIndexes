@@ -1,50 +1,79 @@
 import React from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
+import TableSortLabel from "@mui/material/TableSortLabel";
 
-import { selectExpectedStocksWeight } from "containers/Moex/selectors";
+import { Direction } from "common/types";
+import { revertDirection } from "common/utils";
+import {
+  selectDirection,
+  selectOrderBy,
+  selectSortedStocksMRBC,
+} from "containers/Moex/selectors";
+import { setDirectionMRBC, setOrderByMRBC } from "containers/Moex/actions";
+import { OrderByMRBC } from "containers/Moex/types";
 import { selectStockCapitalization } from "containers/Tinkoff/selectors";
 import { selectRuPortfolio } from "containers/UserData/selectors";
 
 const Moex = () => {
-  const securities = useSelector(selectExpectedStocksWeight);
+  const sortedStocksMRBC = useSelector(selectSortedStocksMRBC);
   const stockCapitalization = useSelector(selectStockCapitalization);
-
+  const direction = useSelector(selectDirection);
+  const orderBy = useSelector(selectOrderBy);
   const ruPortfolio = useSelector(selectRuPortfolio);
 
-  if (!securities) {
+  const dispatch = useDispatch();
+
+  if (!sortedStocksMRBC) {
     return null;
   }
 
   const tableHeads = [
-    "Название эмитента",
-    "Тикер",
-    "ISIN",
-    "Всего выпущено акций",
-    "Средневзвешенная цена акции",
-    "Капитализация акций",
-    "Вес в индексе, %",
-    "Количество в портфеле, шт",
-    "Вес в портфеле, %",
-    "Купить, шт",
-  ];
+    { id: "shortnames", name: "Название эмитента" },
+    { id: "ticker", name: "Тикер" },
+    { id: "isin", name: "ISIN" },
+    { id: "issueSize", name: "Всего выпущено акций" },
+    { id: "prevPrice", name: "Средневзвешенная цена акции" },
+    { id: "stockCapitalization", name: "Капитализация акций" },
+    { id: "weight", name: "Вес в индексе, %" },
+    { id: "weightInPortfolio", name: "Количество в портфеле, шт" },
+    { id: "balance", name: "Вес в портфеле, %" },
+    { id: "toBuy", name: "Купить, шт" },
+  ] as {
+    id: OrderByMRBC;
+    name: string;
+  }[];
+
+  const sortHandler = (order: OrderByMRBC) => {
+    if (orderBy === order) {
+      dispatch(setDirectionMRBC(revertDirection[direction] as Direction));
+    } else {
+      dispatch(setOrderByMRBC(order));
+    }
+  };
 
   return (
     <Table size="small" stickyHeader>
       <TableHead>
         <TableRow>
-          {tableHeads.map((tableHead, idx) => {
-            return <TableCell key={idx}>{tableHead}</TableCell>;
+          {tableHeads.map(({ id, name }) => {
+            return (
+              <TableCell key={id} onClick={() => sortHandler(id)}>
+                <TableSortLabel active={orderBy === id} direction={direction}>
+                  {name}
+                </TableSortLabel>
+              </TableCell>
+            );
           })}
         </TableRow>
       </TableHead>
       <TableBody>
-        {Object.values(securities).map(
+        {sortedStocksMRBC.map(
           ({
             shortnames,
             ticker,

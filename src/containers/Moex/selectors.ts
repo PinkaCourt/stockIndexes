@@ -9,6 +9,8 @@ export const selectAllStocksInfo = (state: RootState) =>
   state.moex.allStocksInfo;
 export const selectExpectedStocksWeight = (state: RootState) =>
   state.moex.expectedStocksWeight;
+export const selectOrderBy = (state: RootState) => state.moex.orderBy;
+export const selectDirection = (state: RootState) => state.moex.direction;
 
 export const selectStocksMRBCFull = createSelector(
   selectStocksMRBC,
@@ -36,8 +38,40 @@ export const selectStocksMRBCFull = createSelector(
   }
 );
 
+export const selectSortedStocksMRBC = createSelector(
+  [selectExpectedStocksWeight, selectOrderBy, selectDirection],
+  (securities, orderBy, direction) => {
+    if (!securities) {
+      return;
+    }
+
+    const orderStr = ["shortnames", "ticker", "isin"];
+
+    return Object.values(securities).sort((a, b) => {
+      let left = a,
+        right = b;
+
+      if (direction === "desc") {
+        left = b;
+        right = a;
+      }
+
+      if (orderStr.includes(orderBy)) {
+        return (left[orderBy] as string).localeCompare(
+          right[orderBy] as string
+        );
+      }
+
+      return Number(left[orderBy]) - Number(right[orderBy]);
+    });
+  }
+);
+
 export const selectMoexState = {
   stocksMRBC: selectStocksMRBC,
   allStocksInfo: selectAllStocksInfo,
   stocksMRBCFull: selectStocksMRBCFull,
+  direction: selectDirection,
+  orderBy: selectOrderBy,
+  sortedStocksMRBC: selectSortedStocksMRBC,
 };

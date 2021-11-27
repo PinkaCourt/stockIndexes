@@ -26,7 +26,7 @@ function deriveDataFromJson<T>(data: { payload: T } | T): T {
 
 export function fetchRequest<Response>(
   url: string,
-  options: RequestInit
+  options?: RequestInit
 ): Promise<Response | Error> {
   return fetch(url, options)
     .then((response) => deserialize(response).then(deriveDataFromJson))
