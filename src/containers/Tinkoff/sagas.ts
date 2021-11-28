@@ -1,7 +1,7 @@
 import { call, put, select, takeEvery } from "redux-saga/effects";
 
 import { selectTinkoffToken } from "containers/UserData/selectors";
-import { setTinkoffToken } from "containers/UserData/actions";
+import { setTinkoffToken } from "containers/UserData/reducer";
 import { getBrokerAccountId, getPortfolio, getAllStocks } from "api/tinkoff";
 import * as A from "./actions";
 import * as T from "./types";
