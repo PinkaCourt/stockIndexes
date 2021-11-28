@@ -1,4 +1,12 @@
-import { call, fork, put, select, take, takeEvery } from "redux-saga/effects";
+import {
+  call,
+  fork,
+  put,
+  select,
+  take,
+  takeEvery,
+  takeLatest,
+} from "redux-saga/effects";
 
 import { getMoexStocks, getMoexAllStocksInfo } from "api/moex";
 import { normalizeResponse, buyAtWishedPortfolio } from "common/utils";
@@ -83,7 +91,7 @@ function* displayExpectedStocksWeight() {
 export default function* moexWatcher() {
   yield fork(getAllStocksInfo);
   yield takeEvery(A.getStocksMRBC, getMRBCStocks);
-  yield takeEvery(
+  yield takeLatest(
     [A.getExpectedStocksWeight, setWishedRuPortfolio],
     displayExpectedStocksWeight
   );
