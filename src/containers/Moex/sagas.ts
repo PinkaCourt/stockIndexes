@@ -1,10 +1,19 @@
-import { call, fork, put, select, take, takeEvery } from "redux-saga/effects";
+import {
+  call,
+  fork,
+  put,
+  select,
+  take,
+  takeEvery,
+  takeLatest,
+} from "redux-saga/effects";
 
 import { getMoexStocks, getMoexAllStocksInfo } from "api/moex";
 import { normalizeResponse, buyAtWishedPortfolio } from "common/utils";
 import { selectRuStocksWithWeigh } from "containers/Tinkoff/selectors";
 import { tinkoffIsDone } from "containers/Tinkoff/actions";
 import { selectRuPortfolio } from "containers/UserData/selectors";
+import { setWishedRuPortfolio } from "containers/UserData/actions";
 import * as A from "./actions";
 import { MOEX15 } from "./constants";
 import { selectStocksMRBCFull } from "./selectors";
@@ -82,5 +91,8 @@ function* displayExpectedStocksWeight() {
 export default function* moexWatcher() {
   yield fork(getAllStocksInfo);
   yield takeEvery(A.getStocksMRBC, getMRBCStocks);
-  yield takeEvery(A.getExpectedStocksWeight, displayExpectedStocksWeight);
+  yield takeLatest(
+    [A.getExpectedStocksWeight, setWishedRuPortfolio],
+    displayExpectedStocksWeight
+  );
 }
