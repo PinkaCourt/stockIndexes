@@ -63,12 +63,13 @@ export const getSecurityCapitalization = (price: number, number: number) => {
 
 export const buyAtWishedPortfolio = (
   wishedPortfolio: number,
-  weight: number,
-  price: number,
+  weight: number | string,
+  price: number = 0.001,
   balance: string = "0"
 ) => {
   return (
-    Math.round(((wishedPortfolio * weight) / price) * 0.01) - Number(balance)
+    Math.round(((wishedPortfolio * Number(weight)) / price) * 0.01) -
+    Number(balance)
   );
 };
 
