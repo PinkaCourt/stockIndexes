@@ -1,6 +1,6 @@
 import { createSelector } from "reselect";
 
-import { STOCK, RUB } from "common/constants";
+import { STOCK, RUB, USD, EUR } from "common/constants";
 import { PortfolioCapitalization, Currency } from "common/types";
 import { toFloatCapital, weightStocksInPortfolio } from "common/utils";
 import { selectRates } from "containers/exchangeRates/selectors";
@@ -66,6 +66,74 @@ export const selectRuStocksWithWeigh = createSelector(
     );
 
     return ruStocksWeightMap;
+  }
+);
+
+export const selectUSDStocksWithWeigh = createSelector(
+  selectTFPortfolio,
+  selectStockCapitalization,
+  (securities, stocksCapital) => {
+    if (!securities) {
+      return;
+    }
+    const usdStocksCapital = stocksCapital ? stocksCapital.USD : 0;
+
+    const usdStocks = Object.values(securities).filter(
+      (stock) =>
+        stock.instrumentType === STOCK &&
+        stock.averagePositionPrice.currency === USD
+    );
+
+    const usdStocksWeight = usdStocks.map((stock) => {
+      return {
+        ...stock,
+        weightInPortfolio: weightStocksInPortfolio(
+          usdStocksCapital,
+          stock.averagePositionPrice.value,
+          stock.balance
+        ),
+      };
+    });
+
+    const usdStocksWeightMap = Object.fromEntries(
+      usdStocksWeight.map((stock) => [stock.ticker, stock])
+    );
+
+    return usdStocksWeightMap;
+  }
+);
+
+export const selectEURStocksWithWeigh = createSelector(
+  selectTFPortfolio,
+  selectStockCapitalization,
+  (securities, stocksCapital) => {
+    if (!securities) {
+      return;
+    }
+    const eurStocksCapital = stocksCapital ? stocksCapital.EUR : 0;
+
+    const eurStocks = Object.values(securities).filter(
+      (stock) =>
+        stock.instrumentType === STOCK &&
+        stock.averagePositionPrice.currency === EUR
+    );
+
+    const eurStocksWeight = eurStocks.map((stock) => {
+      return {
+        ...stock,
+        weightInPortfolio: weightStocksInPortfolio(
+          eurStocksCapital,
+          stock.averagePositionPrice.value,
+          stock.balance
+        ),
+      };
+    });
+
+    const eurStocksWeightMap = Object.fromEntries(
+      eurStocksWeight.map((stock) => [stock.ticker, stock])
+    );
+
+    return eurStocksWeightMap;
   }
 );
 
