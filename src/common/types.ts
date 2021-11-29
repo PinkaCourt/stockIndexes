@@ -50,3 +50,24 @@ export interface RawRates {
     [key: string]: RateInfo;
   };
 }
+
+export interface StockScreenerRaw {
+  symbol: string;
+  companyName: string;
+  marketCap: number;
+  sector: string;
+  industry: string;
+  beta: number;
+  price: number;
+  lastAnnualDividend: number;
+  volume: number;
+  exchange: string;
+  exchangeShortName: string;
+  country: string;
+  isEtf: boolean;
+  isActivelyTrading: boolean;
+}
+
+export interface StockScreenerMap {
+  [key: string]: StockScreenerRaw;
+}
