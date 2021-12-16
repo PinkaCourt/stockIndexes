@@ -1,4 +1,5 @@
 import { MoexResponseData } from "containers/Moex/types";
+import { Direction } from "common/types";
 import { HUNDRED_PERCENT } from "./constants";
 
 export const toFloatCapital = (price: number, numberStocks: string) => {
@@ -63,17 +64,16 @@ export const getSecurityCapitalization = (price: number, number: number) => {
 
 export const buyAtWishedPortfolio = (
   wishedPortfolio: number,
-  weight: number | string,
+  weight: number,
   price: number = 0.001,
   balance: string = "0"
 ) => {
   return (
-    Math.round(((wishedPortfolio * Number(weight)) / price) * 0.01) -
-    Number(balance)
+    Math.round(((wishedPortfolio * weight) / price) * 0.01) - Number(balance)
   );
 };
 
-export const revertDirection = {
+export const revertDirection: { [key: string]: Direction } = {
   asc: "desc",
   desc: "asc",
 };
