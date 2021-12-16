@@ -8,7 +8,6 @@ import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
 import TableSortLabel from "@mui/material/TableSortLabel";
 
-import { Direction } from "common/types";
 import { revertDirection } from "common/utils";
 import {
   selectDirection,
@@ -49,7 +48,7 @@ const SP500 = () => {
 
   const sortHandler = (order: OrderBySP500) => {
     if (orderBy === order) {
-      dispatch(setDirectionSP500(revertDirection[direction] as Direction));
+      dispatch(setDirectionSP500(revertDirection[direction]));
     } else {
       dispatch(setOrderBySP500(order));
     }
