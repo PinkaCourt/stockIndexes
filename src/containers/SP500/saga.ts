@@ -64,7 +64,7 @@ function* getSP500Stocks() {
         balance: USDStocksWithWeigh[stock.symbol]?.balance || "0",
         toBuy: buyAtWishedPortfolio(
           usdWishedPortfolio,
-          stock.weight,
+          Number(stock.weight),
           stocksUSA[stock.symbol]?.price,
           USDStocksWithWeigh[stock.symbol]?.balance
         ),
