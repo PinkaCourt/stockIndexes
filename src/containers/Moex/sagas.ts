@@ -15,7 +15,6 @@ import { tinkoffIsDone } from "containers/Tinkoff/actions";
 import { selectRuPortfolio } from "containers/UserData/selectors";
 import { setWishedRuPortfolio } from "containers/UserData/actions";
 import * as A from "./actions";
-import { MOEX15 } from "./constants";
 import { selectStocksMRBCFull } from "./selectors";
 import * as T from "./types";
 
@@ -35,7 +34,7 @@ function* getAllStocksInfo() {
 }
 
 function* getMRBCStocks() {
-  const { analytics }: T.Analytics = yield call(getMoexStocks, MOEX15);
+  const { analytics }: T.Analytics = yield call(getMoexStocks);
 
   const entryMRBCStock: T.entryMoexIndexStock[] = normalizeResponse(analytics);
 

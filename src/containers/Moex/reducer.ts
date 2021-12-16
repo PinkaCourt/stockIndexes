@@ -16,8 +16,8 @@ const initState: InitState = {
   stocksMRBC: null,
   allStocksInfo: null,
   expectedStocksWeight: null,
-  direction: "asc",
-  orderBy: "shortnames",
+  direction: "desc",
+  orderBy: "weight",
 };
 
 export default createReducer(initState, (builder) => {
