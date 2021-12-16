@@ -22,16 +22,16 @@ const sp500Slice = createSlice({
   initialState,
   reducers: {
     setAllUSAStocksMap(state, { payload }: PayloadAction<StockScreenerMap>) {
-      return { ...state, stocksUSA: payload };
+      state.stocksUSA = payload;
     },
     setSP500Stocks(state, { payload }: PayloadAction<T.SP500StocksMap>) {
-      return { ...state, stocksSP500: payload };
+      state.stocksSP500 = payload;
     },
     setDirectionSP500(state, { payload }: PayloadAction<Direction>) {
-      return { ...state, direction: payload };
+      state.direction = payload;
     },
     setOrderBySP500(state, { payload }: PayloadAction<T.OrderBySP500>) {
-      return { ...state, orderBy: payload };
+      state.orderBy = payload;
     },
   },
 });
