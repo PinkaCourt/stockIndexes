@@ -6,9 +6,9 @@ const format = ".json";
 
 const baseURL = "https://iss.moex.com";
 
-const index_MOEXBMI_URL =
+const index_IMOEX_URL =
   baseURL +
-  "/iss/statistics/engines/stock/markets/index/analytics/MOEXBMI.json?limit=100";
+  "/iss/statistics/engines/stock/markets/index/analytics/IMOEX.json?limit=100";
 const allStockTQBR =
   baseURL +
   `/iss/engines/stock/markets/shares/boards/${tradingBoard}/securities`;
@@ -18,7 +18,7 @@ const params: RequestInit = {
 };
 
 export const getMoexStocks = () => {
-  return fetchRequest<T.Analytics>(index_MOEXBMI_URL, params);
+  return fetchRequest<T.Analytics>(index_IMOEX_URL, params);
 };
 
 export const getMoexAllStocksInfo = () => {
