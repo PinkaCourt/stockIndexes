@@ -41,8 +41,8 @@ const Moex = () => {
     { id: "prevPrice", name: "Средневзвешенная цена акции" },
     { id: "stockCapitalization", name: "Капитализация акций" },
     { id: "weight", name: "Вес в индексе, %" },
-    { id: "weightInPortfolio", name: "Количество в портфеле, шт" },
-    { id: "balance", name: "Вес в портфеле, %" },
+    { id: "weightInPortfolio", name: "Вес в портфеле, %" },
+    { id: "balance", name: "Количество в портфеле, шт" },
     { id: "toBuy", name: "Купить, шт" },
   ] as {
     id: OrderByMRBC;

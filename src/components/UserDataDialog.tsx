@@ -10,7 +10,9 @@ import TextField from "@mui/material/TextField";
 import {
   setTinkoffToken,
   setWishedRuPortfolio,
-} from "containers/UserData/actions";
+  setWishedUsdPortfolio,
+  setWishedEurPortfolio,
+} from "containers/UserData/reducer";
 
 interface Props {
   open: boolean;
@@ -20,12 +22,16 @@ interface Props {
 const UserDataDialog = ({ open, handleCloseDialog }: Props) => {
   const [token, setToken] = React.useState("");
   const [ruPortfolio, setRuPortfolio] = React.useState(0);
+  const [usdPortfolio, setUsdPortfolio] = React.useState(0);
+  const [eurPortfolio, setEurPortfolio] = React.useState(0);
 
   const dispatch = useDispatch();
 
   const handleClickOK = () => {
     dispatch(setTinkoffToken(token));
     dispatch(setWishedRuPortfolio(ruPortfolio));
+    dispatch(setWishedUsdPortfolio(usdPortfolio));
+    dispatch(setWishedEurPortfolio(eurPortfolio));
     handleCloseDialog();
   };
 
@@ -40,6 +46,16 @@ const UserDataDialog = ({ open, handleCloseDialog }: Props) => {
   }: React.ChangeEvent<HTMLInputElement>) => {
     setRuPortfolio(Number(value));
   };
+  const handleUsdPortfolioChange = ({
+    target: { value },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    setUsdPortfolio(Number(value));
+  };
+  const handleEurPortfolioChange = ({
+    target: { value },
+  }: React.ChangeEvent<HTMLInputElement>) => {
+    setEurPortfolio(Number(value));
+  };
 
   const portfolios = [
     {
@@ -47,6 +63,18 @@ const UserDataDialog = ({ open, handleCloseDialog }: Props) => {
       label: "Желаемый портфель в рублях",
       value: ruPortfolio,
       fnChange: handleRuPortfolioChange,
+    },
+    {
+      id: "usd",
+      label: "Желаемый портфель в долларах",
+      value: usdPortfolio,
+      fnChange: handleUsdPortfolioChange,
+    },
+    {
+      id: "eur",
+      label: "Желаемый портфель в евро",
+      value: eurPortfolio,
+      fnChange: handleEurPortfolioChange,
     },
   ];
 
