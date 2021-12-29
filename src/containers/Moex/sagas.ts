@@ -13,7 +13,7 @@ import { normalizeResponse, buyAtWishedPortfolio } from "common/utils";
 import { selectRuStocksWithWeigh } from "containers/Tinkoff/selectors";
 import { tinkoffIsDone } from "containers/Tinkoff/actions";
 import { selectRuPortfolio } from "containers/UserData/selectors";
-import { setWishedRuPortfolio } from "containers/UserData/actions";
+import { setWishedRuPortfolio } from "containers/UserData/reducer";
 import * as A from "./actions";
 import { selectStocksMRBCFull } from "./selectors";
 import * as T from "./types";
