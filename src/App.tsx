@@ -5,7 +5,7 @@ import { ThemeProvider } from "@mui/material/styles";
 
 import Moex from "components/Moex";
 import SP500 from "components/SP500";
-import DAX40 from "components/DAX";
+import DAX40 from "components/DAX40";
 import TinkoffTable from "components/Tinkoff";
 import UserDataDialog from "components/UserDataDialog";
 import AppBarMui from "components/AppBarMui";
