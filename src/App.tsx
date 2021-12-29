@@ -1,5 +1,5 @@
 import React from "react";
-import { Switch, Route, useLocation } from "react-router-dom";
+import { Switch, Route, useLocation, Redirect } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { ThemeProvider } from "@mui/material/styles";
 
@@ -75,6 +75,7 @@ const App = () => {
             component={route.component}
           />
         ))}
+        <Redirect from="/" to={routes.tinkoff.path} />
       </Switch>
     </ThemeProvider>
   );
