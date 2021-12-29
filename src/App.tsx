@@ -5,11 +5,12 @@ import { ThemeProvider } from "@mui/material/styles";
 
 import Moex from "components/Moex";
 import SP500 from "components/SP500";
+import DAX40 from "components/DAX";
 import TinkoffTable from "components/Tinkoff";
 import UserDataDialog from "components/UserDataDialog";
 import AppBarMui from "components/AppBarMui";
 import { selectTinkoffToken } from "containers/UserData/selectors";
-import { themeDF, themeTF, themeMOEX, themeSP500 } from "themes";
+import { themeDF, themeTF, themeMOEX, themeSP500, themeDax } from "themes";
 import "./App.css";
 
 export const routes = {
@@ -30,6 +31,12 @@ export const routes = {
     exact: false,
     label: "S&P500",
     component: SP500,
+  },
+  dax: {
+    path: "/dax",
+    exact: false,
+    label: "DAX40",
+    component: DAX40,
   },
 };
 
@@ -57,6 +64,8 @@ const App = () => {
         return themeMOEX;
       case routes.sp500.path:
         return themeSP500;
+      case routes.dax.path:
+        return themeDax;
       default:
         return themeDF;
     }
