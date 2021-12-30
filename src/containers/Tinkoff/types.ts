@@ -33,16 +33,18 @@ export interface Account {
   brokerAccountId: string;
 }
 
-export interface Position {
-  figi: string; //like BBG000R607Y3
-  ticker: string; //like PLZL
-  isin: string; //like RU000A0JNAA8
+export interface Security {
+  figi: string;
+  ticker: string;
+  isin: string;
+  name: string;
+}
+export interface Position extends Security {
   instrumentType: InstrumentType;
-  balance: string; //like 10
-  lots: string; //like 1
+  balance: string;
+  lots: string;
   expectedYield: Price;
-  averagePositionPrice: Price; // + or -
-  name: string; //like Полюс Золото
+  averagePositionPrice: Price;
 }
 
 export interface PositionMap {
@@ -58,10 +60,11 @@ export interface Price {
   value: number;
 }
 
-export interface Instrument extends Position {
-  minPriceIncrement: number; //like 0.01
-  lot: number; //like 1
-  type: string; // instrumentType
+export interface Instrument extends Security {
+  currency: Currency;
+  lot: string;
+  minPriceIncrement: number;
+  type: InstrumentType;
 }
 
 export interface PositionWeight extends Position {
