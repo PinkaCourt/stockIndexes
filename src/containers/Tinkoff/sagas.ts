@@ -48,12 +48,12 @@ function* getAllStocksServer() {
   const { instruments } = yield call(getAllStocks, token);
 
   if (instruments) {
-    const instrumentMap: T.InstrumentMap = instruments.reduce(
-      (accum: any, current: T.Instrument) => {
-        accum[current.ticker] = current;
+    const instrumentMap = instruments.reduce(
+      (accum: T.InstrumentMap, current: T.Instrument) => {
+        accum[current.isin] = current;
         return accum;
       },
-      {} as T.InstrumentMap
+      {}
     );
     yield put(A.setAllStocks(instrumentMap));
   }
