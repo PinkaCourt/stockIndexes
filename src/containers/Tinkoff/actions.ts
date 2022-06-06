@@ -16,3 +16,5 @@ export const tinkoffIsDone = createAction("tinkoffDone");
 
 export const setDirectionTF = createAction<Direction>("setDirectionTF");
 export const setOrderByTF = createAction<T.OrderByTF>("setOrderByTF");
+
+export const setBalanceTF = createAction<T.Balance>("setBalanceTF");

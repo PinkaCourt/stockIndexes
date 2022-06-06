@@ -12,10 +12,10 @@ function* getTFAccountId() {
   );
 
   const { accounts } = yield call(getBrokerAccountId, token);
-
+  // TODO сделать выбор по счету а не хардкодить первый
   if (accounts.length > 0) {
-    yield put(A.setTFAccountId(accounts[0].brokerAccountId));
-    yield put(A.getTFPortfolio(accounts[0].brokerAccountId));
+    yield put(A.setTFAccountId(accounts[0].id));
+    yield put(A.getTFPortfolio(accounts[0].id));
     yield put(A.getAllStocks());
   }
 }
@@ -25,17 +25,43 @@ function* getTFPortfolio({ payload }: ReturnType<typeof A.getTFPortfolio>) {
     selectTinkoffToken
   );
 
-  const { positions } = yield call(getPortfolio, payload, token);
+  const {
+    positions,
+    totalAmountShares,
+    totalAmountBonds,
+    totalAmountEtf,
+    totalAmountCurrencies,
+    totalAmountFutures,
+  } = yield call(getPortfolio, payload, token);
+
+  const total = (
+    Number(totalAmountShares.units) +
+    Number(totalAmountBonds.units) +
+    Number(totalAmountEtf.units) +
+    Number(totalAmountCurrencies.units) +
+    Number(totalAmountFutures.units)
+  ).toString();
+
+  const balance = {
+    totalAmountShares: totalAmountShares.units,
+    totalAmountBonds: totalAmountBonds.units,
+    totalAmountEtf: totalAmountEtf.units,
+    totalAmountCurrencies: totalAmountCurrencies.units,
+    totalAmountFutures: totalAmountFutures.units,
+    total: total,
+  };
 
   if (positions) {
     const positionMap: T.PositionMap = positions.reduce(
       (accum: any, current: T.Position) => {
-        accum[current.ticker] = current;
+        accum[current.figi] = current;
         return accum;
       },
       {} as T.PositionMap
     );
+
     yield put(A.setTFPortfolio(positionMap));
+    yield put(A.setBalanceTF(balance));
     yield put(A.tinkoffIsDone());
   }
 }

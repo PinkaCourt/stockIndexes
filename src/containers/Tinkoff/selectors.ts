@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
 
-import { STOCK, RUB, USD, EUR } from "common/constants";
-import { PortfolioCapitalization, Currency } from "common/types";
+import { RUB, USD, EUR } from "common/constants";
+import { Currency } from "common/types";
 import { toFloatCapital, weightStocksInPortfolio } from "common/utils";
 import { selectRates } from "containers/exchangeRates/selectors";
 import { RootState } from "store/store";
@@ -12,42 +12,72 @@ export const selectTFBrokerAccountId = (state: RootState) =>
 export const selectTFPortfolio = (state: RootState) => state.tinkoff.portfolio;
 export const selectOrderBy = (state: RootState) => state.tinkoff.orderBy;
 export const selectDirection = (state: RootState) => state.tinkoff.direction;
+export const selectAllStocks = (state: RootState) => state.tinkoff.allStocks;
+
+export const selectNormalizeStocks = createSelector(
+  selectTFPortfolio,
+  selectAllStocks,
+  (securities, stocks) => {
+    if (!securities || !stocks) {
+      return;
+    }
+
+    const filteredStocks: T.Instrument[] = Object.values(stocks).filter(
+      (elem) => Object.keys(securities).includes(elem.figi)
+    );
+
+    return filteredStocks.reduce(
+      (accum, current) => ({
+        ...accum,
+        [current.ticker]: {
+          ...current,
+          quantity: securities[current.figi].quantity.units,
+          averagePositionPrice: Number(
+            securities[current.figi].averagePositionPrice.units
+          ),
+          expectedYield: Number(securities[current.figi].expectedYield.units),
+          currentPrice: Number(securities[current.figi].currentPrice.units),
+        },
+      }),
+      {} as T.NormalizeStocksMap
+    );
+  }
+);
 
 export const selectStockCapitalization = createSelector(
-  selectTFPortfolio,
+  selectNormalizeStocks,
   (securities) => {
     if (!securities) {
       return;
     }
-    const allStocks: T.Position[] = Object.values(securities).filter(
-      (elem) => elem.instrumentType === STOCK
-    );
+
+    const allStocks: T.NormalizeStocks[] = Object.values(securities);
 
     return allStocks.reduce(
-      (acc, { balance, averagePositionPrice: { currency, value } }) => ({
+      (acc, { quantity, averagePositionPrice, currency }) => ({
         ...acc,
         [currency]: acc[currency]
-          ? acc[currency] + toFloatCapital(value, balance)
-          : toFloatCapital(value, balance),
+          ? acc[currency] + toFloatCapital(averagePositionPrice, quantity)
+          : toFloatCapital(averagePositionPrice, quantity),
       }),
-      {} as PortfolioCapitalization
+      // TODO to fix type
+      {} as any // PortfolioCapitalization
     );
   }
 );
 
 export const selectRuStocksWithWeigh = createSelector(
-  selectTFPortfolio,
+  selectNormalizeStocks,
   selectStockCapitalization,
   (securities, stocksCapital) => {
-    if (!securities) {
+    if (!securities || !stocksCapital) {
       return;
     }
-    const ruStocksCapital = stocksCapital ? stocksCapital.RUB : 0;
+
+    const ruStocksCapital = stocksCapital ? stocksCapital[RUB] : 0;
 
     const ruStocks = Object.values(securities).filter(
-      (stock) =>
-        stock.instrumentType === STOCK &&
-        stock.averagePositionPrice.currency === RUB
+      (stock) => stock.currency === RUB
     );
 
     const ruStocksWeight = ruStocks.map((stock) => {
@@ -55,8 +85,8 @@ export const selectRuStocksWithWeigh = createSelector(
         ...stock,
         weightInPortfolio: weightStocksInPortfolio(
           ruStocksCapital,
-          stock.averagePositionPrice.value,
-          stock.balance
+          stock.averagePositionPrice,
+          stock.quantity
         ),
       };
     });
@@ -70,18 +100,16 @@ export const selectRuStocksWithWeigh = createSelector(
 );
 
 export const selectUSDStocksWithWeigh = createSelector(
-  selectTFPortfolio,
+  selectNormalizeStocks,
   selectStockCapitalization,
   (securities, stocksCapital) => {
     if (!securities) {
       return;
     }
-    const usdStocksCapital = stocksCapital ? stocksCapital.USD : 0;
+    const usdStocksCapital = stocksCapital ? stocksCapital[USD] : 0;
 
     const usdStocks = Object.values(securities).filter(
-      (stock) =>
-        stock.instrumentType === STOCK &&
-        stock.averagePositionPrice.currency === USD
+      (stock) => stock.currency === USD
     );
 
     const usdStocksWeight = usdStocks.map((stock) => {
@@ -89,8 +117,8 @@ export const selectUSDStocksWithWeigh = createSelector(
         ...stock,
         weightInPortfolio: weightStocksInPortfolio(
           usdStocksCapital,
-          stock.averagePositionPrice.value,
-          stock.balance
+          stock.averagePositionPrice,
+          stock.quantity
         ),
       };
     });
@@ -104,18 +132,16 @@ export const selectUSDStocksWithWeigh = createSelector(
 );
 
 export const selectEURStocksWithWeigh = createSelector(
-  selectTFPortfolio,
+  selectNormalizeStocks,
   selectStockCapitalization,
   (securities, stocksCapital) => {
     if (!securities) {
       return;
     }
-    const eurStocksCapital = stocksCapital ? stocksCapital.EUR : 0;
+    const eurStocksCapital = stocksCapital ? stocksCapital[EUR] : 0;
 
     const eurStocks = Object.values(securities).filter(
-      (stock) =>
-        stock.instrumentType === STOCK &&
-        stock.averagePositionPrice.currency === EUR
+      (stock) => stock.currency === EUR
     );
 
     const eurStocksWeight = eurStocks.map((stock) => {
@@ -123,8 +149,8 @@ export const selectEURStocksWithWeigh = createSelector(
         ...stock,
         weightInPortfolio: weightStocksInPortfolio(
           eurStocksCapital,
-          stock.averagePositionPrice.value,
-          stock.balance
+          stock.averagePositionPrice,
+          stock.quantity
         ),
       };
     });
@@ -138,7 +164,7 @@ export const selectEURStocksWithWeigh = createSelector(
 );
 
 export const selectSortedTFPortfolio = createSelector(
-  [selectTFPortfolio, selectOrderBy, selectDirection, selectRates],
+  [selectNormalizeStocks, selectOrderBy, selectDirection, selectRates],
   (securities, orderBy, direction, rates) => {
     if (!securities) {
       return;
@@ -158,12 +184,12 @@ export const selectSortedTFPortfolio = createSelector(
       }
 
       if (orderBy === "expectedYield" || orderBy === "averagePositionPrice") {
-        const currencyL: Currency = left[orderBy].currency;
-        const currencyR: Currency = right[orderBy].currency;
+        const currencyL: Currency = left.currency;
+        const currencyR: Currency = right.currency;
 
         return (
-          Number(left[orderBy].value * rates[currencyL]) -
-          Number(right[orderBy].value * rates[currencyR])
+          Number(left[orderBy] * rates[currencyL]) -
+          Number(right[orderBy] * rates[currencyR])
         );
       }
 
@@ -174,7 +200,7 @@ export const selectSortedTFPortfolio = createSelector(
 
 export const selectTinkoffState = {
   brokerAccountId: selectTFBrokerAccountId,
-  portfolio: selectTFPortfolio,
+  portfolio: selectNormalizeStocks, // selectTFPortfolio
   portfolioCapitalization: selectStockCapitalization,
   direction: selectDirection,
   orderBy: selectOrderBy,

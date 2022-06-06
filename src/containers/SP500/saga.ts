@@ -61,12 +61,12 @@ function* getSP500Stocks() {
         weightInPortfolio:
           USDStocksWithWeigh[stock.symbol]?.weightInPortfolio || 0,
         isin: USDStocksWithWeigh[stock.symbol]?.isin || "",
-        balance: USDStocksWithWeigh[stock.symbol]?.balance || "0",
+        balance: USDStocksWithWeigh[stock.symbol]?.quantity || "0",
         toBuy: buyAtWishedPortfolio(
           usdWishedPortfolio,
           Number(stock.weight),
           stocksUSA[stock.symbol]?.price,
-          USDStocksWithWeigh[stock.symbol]?.balance
+          USDStocksWithWeigh[stock.symbol]?.quantity
         ),
       },
     }),

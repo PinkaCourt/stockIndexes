@@ -1,5 +1,5 @@
 import { call, fork, put } from "redux-saga/effects";
-
+import { USD, EUR } from "common/constants";
 import { getExchangeRates } from "api/common";
 import { setExchangeRates } from "./reducer";
 
@@ -8,8 +8,8 @@ function* getExchangeRatesSaga() {
 
   yield put(
     setExchangeRates({
-      EUR: Valute["EUR"].Value,
-      USD: Valute["USD"].Value,
+      [EUR]: Valute["EUR"].Value,
+      [USD]: Valute["USD"].Value,
     })
   );
 }

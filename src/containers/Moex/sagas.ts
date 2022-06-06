@@ -71,12 +71,12 @@ function* displayExpectedStocksWeight() {
         ...current,
         weightInPortfolio:
           ruStocksWithWeigh[current.ticker]?.weightInPortfolio || 0,
-        balance: ruStocksWithWeigh[current.ticker]?.balance || "0",
+        balance: ruStocksWithWeigh[current.ticker]?.quantity || "0",
         toBuy: buyAtWishedPortfolio(
           ruWishedPortfolio,
           current.weight,
           current.prevPrice,
-          ruStocksWithWeigh[current.ticker]?.balance
+          ruStocksWithWeigh[current.ticker]?.quantity
         ),
       };
       return accum;

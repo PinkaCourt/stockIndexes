@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Table from "@mui/material/Table";
 import TableHead from "@mui/material/TableHead";
@@ -68,21 +67,23 @@ const TinkoffTable = () => {
           ({
             name,
             ticker,
-            balance,
-            lots,
+            quantity,
+            lot,
+            figi,
             expectedYield,
             averagePositionPrice,
+            currency,
           }) => (
-            <TableRow key={name} hover>
+            <TableRow key={figi} hover>
               <TableCell>{name}</TableCell>
               <TableCell>{ticker}</TableCell>
-              <TableCell>{balance}</TableCell>
-              <TableCell>{lots}</TableCell>
+              <TableCell>{quantity}</TableCell>
+              <TableCell>{lot}</TableCell>
               <TableCell>
-                {expectedYield.value}, {expectedYield.currency}
+                {expectedYield}, {currency}
               </TableCell>
               <TableCell>
-                {averagePositionPrice.value}, {averagePositionPrice.currency}
+                {averagePositionPrice}, {currency}
               </TableCell>
             </TableRow>
           )

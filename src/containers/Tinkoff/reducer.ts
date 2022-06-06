@@ -10,6 +10,7 @@ export interface InitState {
   allStocks: T.InstrumentMap | null;
   direction: Direction;
   orderBy: T.OrderByTF;
+  balance: T.Balance | null;
 }
 
 const initState: InitState = {
@@ -18,6 +19,7 @@ const initState: InitState = {
   allStocks: null,
   direction: "asc",
   orderBy: "name",
+  balance: null,
 };
 
 export default createReducer(initState, (builder) => {
@@ -35,5 +37,8 @@ export default createReducer(initState, (builder) => {
   });
   builder.addCase(A.setOrderByTF, (state, { payload }) => {
     state.orderBy = payload;
+  });
+  builder.addCase(A.setBalanceTF, (state, { payload }) => {
+    state.balance = payload;
   });
 });

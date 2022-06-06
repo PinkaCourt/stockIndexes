@@ -11,7 +11,8 @@ export type InstrumentType =
   | typeof constants.STOCK
   | typeof constants.BOND
   | typeof constants.ETF
-  | typeof constants.CURRENCY;
+  | typeof constants.CURRENCY
+  | typeof constants.SHARE;
 
 export type Currency =
   | typeof constants.RUB
