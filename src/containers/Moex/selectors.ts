@@ -1,14 +1,13 @@
 import { createSelector } from "reselect";
-
-import { getSecurityCapitalization } from "common/utils";
+import { getSecurityCapitalization, buyAtWishedPortfolio } from "common/utils";
 import { RootState } from "store/store";
-import { StocksMRBCFullMap } from "./types";
+import { selectRuStocksWithWeigh } from "containers/Tinkoff/selectors";
+import { selectRuPortfolio } from "containers/UserData/selectors";
+import { StocksMRBCFullMap, ExpectedStocksWeight } from "./types";
 
 export const selectStocksMRBC = (state: RootState) => state.moex.stocksMRBC;
 export const selectAllStocksInfo = (state: RootState) =>
   state.moex.allStocksInfo;
-export const selectExpectedStocksWeight = (state: RootState) =>
-  state.moex.expectedStocksWeight;
 export const selectOrderBy = (state: RootState) => state.moex.orderBy;
 export const selectDirection = (state: RootState) => state.moex.direction;
 
@@ -38,8 +37,37 @@ export const selectStocksMRBCFull = createSelector(
   }
 );
 
+export const selectMOEXStocksWeightMap = createSelector(
+  selectStocksMRBCFull,
+  selectRuStocksWithWeigh,
+  selectRuPortfolio,
+  (stocksMOEX, stocksTINKOFF, ruWished) => {
+    if (!stocksMOEX || !stocksTINKOFF) {
+      return;
+    }
+
+    const stocksMap = Object.values(stocksMOEX).reduce((accum, current) => {
+      accum[current.ticker] = {
+        ...current,
+        weightInPortfolio:
+          stocksTINKOFF[current.ticker]?.weightInPortfolio || 0,
+        balance: stocksTINKOFF[current.ticker]?.quantity || "0",
+        toBuy: buyAtWishedPortfolio(
+          ruWished,
+          current.weight,
+          current.prevPrice,
+          stocksTINKOFF[current.ticker]?.quantity
+        ),
+      };
+      return accum;
+    }, {} as ExpectedStocksWeight);
+
+    return stocksMap;
+  }
+);
+
 export const selectSortedStocksMRBC = createSelector(
-  [selectExpectedStocksWeight, selectOrderBy, selectDirection],
+  [selectMOEXStocksWeightMap, selectOrderBy, selectDirection],
   (securities, orderBy, direction) => {
     if (!securities) {
       return;

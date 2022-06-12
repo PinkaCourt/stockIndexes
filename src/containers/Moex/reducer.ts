@@ -7,7 +7,6 @@ import * as T from "./types";
 export interface InitState {
   stocksMRBC: T.MoexStockMap | null;
   allStocksInfo: T.MoexSecuritiesMap | null;
-  expectedStocksWeight: T.ExpectedStocksWeight | null;
   direction: Direction;
   orderBy: T.OrderByMRBC;
 }
@@ -15,7 +14,6 @@ export interface InitState {
 const initState: InitState = {
   stocksMRBC: null,
   allStocksInfo: null,
-  expectedStocksWeight: null,
   direction: "desc",
   orderBy: "weight",
 };
@@ -26,9 +24,6 @@ export default createReducer(initState, (builder) => {
   });
   builder.addCase(A.setAllStocksInfo, (state, { payload }) => {
     state.allStocksInfo = payload;
-  });
-  builder.addCase(A.setExpectedStocksWeight, (state, { payload }) => {
-    state.expectedStocksWeight = payload;
   });
   builder.addCase(A.setDirectionMRBC, (state, { payload }) => {
     state.direction = payload;
