@@ -7,7 +7,6 @@ function* getFullStockInfoSaga({
   payload,
 }: ReturnType<typeof A.getFullStockInfo>) {
   const profile: StockProfileRaw[] = yield call(getStockProfile, payload);
-
   yield put(A.setFullStockInfo(profile[0]));
 }
 

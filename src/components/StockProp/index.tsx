@@ -1,12 +1,15 @@
 interface Props {
-  property: string;
-  value: string | number;
+  name: string;
+  value?: string | number;
 }
 
-const StockProp = ({ property, value }: Props) => {
+const StockProp = ({ name, value }: Props) => {
+  if (!value) {
+    value = "";
+  }
   return (
     <div>
-      <span>{property}:</span>
+      <span>{name}: </span>
       <span>{value}</span>
     </div>
   );

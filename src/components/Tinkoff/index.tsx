@@ -16,14 +16,11 @@ import {
 } from "containers/Tinkoff/selectors";
 import { setDirectionTF, setOrderByTF } from "containers/Tinkoff/actions";
 import { NormalizeStocks, OrderByTF } from "containers/Tinkoff/types";
-import SecurityCard from "components/SecurityCard";
+import { getFullStockInfo } from "containers/FullStockInfo/actions";
+import SecurityCardDIY from "components/SecurityCardDIY";
 
 const TinkoffTable = () => {
   const [openCard, setOpenCard] = React.useState<boolean>(false);
-
-  const [stockCard, setStockCard] = React.useState<NormalizeStocks | null>(
-    null
-  );
 
   const securities = useSelector(selectSortedTFPortfolio);
   const direction = useSelector(selectDirection);
@@ -35,33 +32,12 @@ const TinkoffTable = () => {
     return null;
   }
 
-  const handleOpenCard = ({
-    name,
-    ticker,
-    quantity,
-    lot,
-    figi,
-    expectedYield,
-    averagePositionPrice,
-    currency,
-    ...other
-  }: NormalizeStocks) => {
+  const handleOpenCard = ({ ticker }: NormalizeStocks) => {
     setOpenCard((prevState) => {
       return !prevState;
     });
-    const stock = {
-      name,
-      ticker,
-      quantity,
-      lot,
-      figi,
-      expectedYield,
-      averagePositionPrice,
-      currency,
-      ...other,
-    };
 
-    setStockCard(stock);
+    dispatch(getFullStockInfo(ticker));
   };
 
   const tableHeads = [
@@ -83,7 +59,7 @@ const TinkoffTable = () => {
       dispatch(setOrderByTF(order));
     }
   };
-  // console.log("securities", securities);
+
   return (
     <>
       <Table size="small" stickyHeader>
@@ -146,7 +122,7 @@ const TinkoffTable = () => {
         </TableBody>
       </Table>
 
-      {openCard && <SecurityCard stock={stockCard} />}
+      {openCard && <SecurityCardDIY />}
     </>
   );
 };

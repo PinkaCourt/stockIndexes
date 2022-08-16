@@ -1,4 +1,5 @@
 import react from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Card from "@mui/material/Card";
 import CardHeader from "@mui/material/CardHeader";
 import CardMedia from "@mui/material/CardMedia";
@@ -15,7 +16,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import MoreVertIcon from "@mui/icons-material/MoreVert";
 import StockProp from "components/StockProp";
 import { NormalizeStocks, OrderByTF } from "containers/Tinkoff/types";
-
+import { selectStockProfile } from "containers/FullStockInfo/selectors";
 /*
 https://finnhub.io/api/v1/stock/profile2?isin=IE00BZ12WP82&token=c5n5guaad3ido15tr8og
 {
@@ -84,29 +85,30 @@ https://financialmodelingprep.com/api/v3/profile/MMM?apikey=d436d494b581048e94f7
 
 */
 
-interface Props {
-  stock: NormalizeStocks | null;
-}
+const SecurityCard = () => {
+  const stock = useSelector(selectStockProfile);
 
-const SecurityCard = (stock: any) => {
-  console.log("stock", stock);
+  if (!stock) return null;
+
+  const countryCode = stock.country.toLowerCase();
+  const countryFlag = `https://ipdata.co/flags/${countryCode}.png`;
+  const exchange = `${stock.exchange} (${stock.exchangeShortName})`;
+
   return (
     <Card
       sx={{
         maxWidth: 1345,
         position: "absolute",
         zIndex: 100,
-        top: "25%",
+        top: "15%",
         left: "25%",
-        // transform: "translate (50%, 50%)",
       }}
     >
       <CardHeader
         avatar={
           <Avatar
             alt="MMM"
-            // src="https://financialmodelingprep.com/image-stock/MMM.png"
-            src="https://static.finnhub.io/logo/2a1802fa-80ec-11ea-a0f5-00000000092a.png"
+            src={stock.image}
             sx={{ width: 56, height: 56 }}
             variant="square"
           />
@@ -116,25 +118,26 @@ const SecurityCard = (stock: any) => {
             <MoreVertIcon />
           </IconButton>
         }
-        title="Shrimp and Chorizo Paella"
-        subheader="September 14, 2016"
+        title={stock.companyName}
+        subheader={stock.website}
       />
       <CardMedia
         component="img"
-        //  height="40"
-        // width="40"
+        height="40"
         image="https://static.finnhub.io/logo/b8fe2cdc-81d4-11ea-bd4e-00000000092a.png"
-        alt="Paella dish"
+        alt="заготовка для отрасли"
       />
       <CardContent>
-        <StockProp property="name" value="MMM" />
-        <StockProp property="PRP" value="2" />
-        <StockProp
-          property="countryOfRiskName"
-          value="Соединенные Штаты Америки"
-        />
-        <StockProp property="sector" value="industrials" />
-        <img src="https://ipdata.co/flags/us.png" alt="Smiley face" />
+        <StockProp name="CEO" value={stock.ceo} />
+        <StockProp name="website" value={stock.website} />
+        <StockProp name="Биржа" value={exchange} />
+        <StockProp name="Страна" value={stock.country} />
+        <StockProp name="Валюта" value={stock.currency} />
+        <StockProp name="Последние дивиденды" value={stock.lastDiv} />
+        <StockProp name="Сектор" value={stock.sector} />
+        <StockProp name="Рыночная капитализация" value={stock.mktCap} />
+
+        <img src={countryFlag} alt="flag" />
       </CardContent>
       <CardActions disableSpacing>
         <IconButton aria-label="add to favorites">
