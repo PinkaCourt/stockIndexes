@@ -7,6 +7,7 @@ import TableCell from "@mui/material/TableCell";
 import TableBody from "@mui/material/TableBody";
 import TableFooter from "@mui/material/TableFooter";
 import TableSortLabel from "@mui/material/TableSortLabel";
+import SecurityCardDIY from "components/SecurityCardDIY";
 
 import { revertDirection } from "common/utils";
 import {
@@ -18,8 +19,10 @@ import { setDirectionSP500, setOrderBySP500 } from "containers/SP500/reducer";
 import { OrderBySP500 } from "containers/SP500/types";
 import { selectStockCapitalization } from "containers/Tinkoff/selectors";
 import { selectUSDPortfolio } from "containers/UserData/selectors";
-
+import { getFullStockInfo } from "containers/FullStockInfo/actions";
 const SP500 = () => {
+  const [openCard, setOpenCard] = React.useState<boolean>(false);
+
   const sortedStocksSP500 = useSelector(selectSortedStocksSP500);
   const stockCapitalization = useSelector(selectStockCapitalization);
   const direction = useSelector(selectDirection);
@@ -54,59 +57,74 @@ const SP500 = () => {
     }
   };
 
+  const handleOpenCard = (symbol: string) => {
+    console.log(sortedStocksSP500);
+    if (!symbol) return;
+    setOpenCard((prevState) => {
+      return !prevState;
+    });
+
+    dispatch(getFullStockInfo(symbol));
+  };
+
   return (
-    <Table size="small" stickyHeader>
-      <TableHead>
-        <TableRow>
-          {tableHeads.map(({ id, name }) => {
-            return (
-              <TableCell key={id} onClick={() => sortHandler(id)}>
-                <TableSortLabel active={orderBy === id} direction={direction}>
-                  {name}
-                </TableSortLabel>
-              </TableCell>
-            );
-          })}
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {sortedStocksSP500.map(
-          ({
-            company,
-            symbol,
-            weight,
-            isin,
-            lastPrice,
-            weightInPortfolio,
-            balance,
-            toBuy,
-          }) => (
-            <TableRow key={symbol} hover>
-              <TableCell>{company}</TableCell>
-              <TableCell>{symbol}</TableCell>
-              <TableCell>{isin}</TableCell>
-              <TableCell>{lastPrice}</TableCell>
-              <TableCell>{weight}</TableCell>
-              <TableCell>{weightInPortfolio}</TableCell>
-              <TableCell>{balance}</TableCell>
-              <TableCell>{toBuy}</TableCell>
-            </TableRow>
-          )
-        )}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell />
-          <TableCell />
-          <TableCell />
-          <TableCell />
-          <TableCell />
-          <TableCell />
-          <TableCell>{stockCapitalization?.USD}</TableCell>
-          <TableCell>{usdPortfolio}</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <>
+      <Table size="small" stickyHeader>
+        <TableHead>
+          <TableRow>
+            {tableHeads.map(({ id, name }) => {
+              return (
+                <TableCell key={id} onClick={() => sortHandler(id)}>
+                  <TableSortLabel active={orderBy === id} direction={direction}>
+                    {name}
+                  </TableSortLabel>
+                </TableCell>
+              );
+            })}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {sortedStocksSP500.map(
+            ({
+              company,
+              symbol,
+              weight,
+              isin,
+              lastPrice,
+              weightInPortfolio,
+              balance,
+              toBuy,
+            }) => (
+              <TableRow key={symbol} hover>
+                <TableCell onClick={() => handleOpenCard(symbol)}>
+                  {company}
+                </TableCell>
+                <TableCell>{symbol}</TableCell>
+                <TableCell>{isin}</TableCell>
+                <TableCell>{lastPrice}</TableCell>
+                <TableCell>{weight}</TableCell>
+                <TableCell>{weightInPortfolio}</TableCell>
+                <TableCell>{balance}</TableCell>
+                <TableCell>{toBuy}</TableCell>
+              </TableRow>
+            )
+          )}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell>{stockCapitalization?.USD}</TableCell>
+            <TableCell>{usdPortfolio}</TableCell>
+          </TableRow>
+        </TableFooter>
+      </Table>
+      {openCard && <SecurityCardDIY />}
+    </>
   );
 };
 
