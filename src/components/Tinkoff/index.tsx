@@ -15,7 +15,7 @@ import {
   selectSortedTFPortfolio,
 } from "containers/Tinkoff/selectors";
 import { setDirectionTF, setOrderByTF } from "containers/Tinkoff/actions";
-import { NormalizeStocks, OrderByTF } from "containers/Tinkoff/types";
+import { OrderByTF } from "containers/Tinkoff/types";
 import { getFullStockInfo } from "containers/FullStockInfo/actions";
 import SecurityCardDIY from "components/SecurityCardDIY";
 
@@ -32,7 +32,7 @@ const TinkoffTable = () => {
     return null;
   }
 
-  const handleOpenCard = ({ ticker }: NormalizeStocks) => {
+  const handleOpenCard = (ticker: string) => {
     setOpenCard((prevState) => {
       return !prevState;
     });
@@ -90,21 +90,7 @@ const TinkoffTable = () => {
               ...other
             }) => (
               <TableRow key={figi} hover>
-                <TableCell
-                  onClick={() =>
-                    handleOpenCard({
-                      name,
-                      ticker,
-                      quantity,
-                      lot,
-                      figi,
-                      expectedYield,
-                      averagePositionPrice,
-                      currency,
-                      ...other,
-                    })
-                  }
-                >
+                <TableCell onClick={() => handleOpenCard(ticker)}>
                   {name}
                 </TableCell>
                 <TableCell>{ticker}</TableCell>

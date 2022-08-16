@@ -111,3 +111,13 @@ export interface StockProfileRaw {
 export interface StockScreenerMap {
   [key: string]: StockScreenerRaw;
 }
+
+const sectorEnum = {
+  "Communication Services": "Communication Services",
+  Technology: "Technology",
+  "Consumer Cyclical": "Consumer Cyclical",
+  "Financial Services ": "Financial Services",
+  Healthcare: "Healthcare",
+  "Consumer Defensive": "Consumer Defensive",
+  //   Healthcare: "Healthcare",
+};

@@ -21,11 +21,7 @@ const SecurityCard = () => {
 
   if (!stock) return null;
 
-  const countryCode = stock.country.toLowerCase();
-  const countryFlag = `https://ipdata.co/flags/${countryCode}.png`;
   const exchange = `${stock.exchange} (${stock.exchangeShortName})`;
-
-  console.log("stock", stock);
 
   return (
     <div className={styles.cardContainer}>
