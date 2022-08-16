@@ -3,10 +3,7 @@ interface Props {
   value?: string | number;
 }
 
-const StockProp = ({ name, value }: Props) => {
-  if (!value) {
-    value = "";
-  }
+const StockProp = ({ name, value = "" }: Props) => {
   return (
     <div>
       <span>{name}: </span>

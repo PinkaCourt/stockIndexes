@@ -18,9 +18,6 @@ const NASDAQ = "NASDAQ";
 //const EURONEXT = "EURONEXT"; // Frankfurt / Paris / MCE / Brussels
 const NYSE = "NYSE";
 
-//countries
-const US = "US";
-
 export const getStocksNASDAQ = () => {
   const url =
     baseURLStockScreener +

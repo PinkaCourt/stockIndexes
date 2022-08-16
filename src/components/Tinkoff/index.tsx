@@ -107,7 +107,6 @@ const TinkoffTable = () => {
           )}
         </TableBody>
       </Table>
-
       {openCard && <SecurityCardDIY />}
     </>
   );

@@ -1,0 +1,28 @@
+.header {
+  height: 100px;
+  width: auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.logo {
+  width: 100px;
+  object-fit: contain;
+}
+
+.nameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 2px;
+}
+
+.title {
+}
+
+.link {
+  text-decoration: none;
+  color: black;
+  cursor: pointer;
+}
