@@ -6,9 +6,18 @@
   min-height: 300px;
   width: 400px;
   background-color: white;
-  top: 30px;
-  left: 30px;
+  top: 25%; //TODO
+  left: 25%; //TODO
   z-index: 2;
   padding: 15px;
   border: 1px solid grey;
+  transform: translate(50%, 50%);
+}
+
+.propsContainer {
+  margin: 15px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 3px;
 }

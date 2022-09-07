@@ -1,5 +1,7 @@
 import * as constants from "./constants";
 
+export type CURRENCY_TYPE = "RUB" | "EUR" | "USD";
+
 export type PortfolioCapitalization = {
   [key in
     | typeof constants.RUB
@@ -79,7 +81,7 @@ export interface StockProfileRaw {
   range: string;
   changes: number;
   companyName: string;
-  currency: string;
+  currency: CURRENCY_TYPE;
   cik: string;
   isin: string;
   cusip: string;
@@ -112,12 +114,17 @@ export interface StockScreenerMap {
   [key: string]: StockScreenerRaw;
 }
 
-const sectorEnum = {
-  "Communication Services": "Communication Services",
-  Technology: "Technology",
+export const sectorEnum = {
+  Healthcare: "healthcare",
+  Technology: "technology",
+  "Communication Services": "communication",
+  "Financial Services ": "financial",
   "Consumer Cyclical": "Consumer Cyclical",
-  "Financial Services ": "Financial Services",
-  Healthcare: "Healthcare",
   "Consumer Defensive": "Consumer Defensive",
-  //   Healthcare: "Healthcare",
+};
+
+export const currencyBadgeEnum = {
+  USD: "$",
+  RUB: "₽",
+  EUR: "€",
 };

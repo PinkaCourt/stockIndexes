@@ -1,4 +1,7 @@
 import styles from "./styles.module.scss";
+import financial from "/icons/financial.svg";
+
+import { ReactComponent as Financial } from "icons/financial.svg";
 
 export interface Props {
   country: string;
@@ -17,10 +20,12 @@ const CardFooter = ({ country, sector }: Props) => {
       </div>
       <div>
         <span className={styles.title}>{sector}</span>
-        <img src={countryFlag} alt="flag" />
+        <img src={"/icons/financial.svg"} alt="flag" />
       </div>
     </div>
   );
 };
 
 export default CardFooter;
+
+//   <img src={financial} alt="flag" />
