@@ -115,12 +115,12 @@ export interface StockScreenerMap {
 }
 
 export const sectorEnum = {
-  "Communication Services": "Communication Services",
+  Healthcare: "healthcare",
+  Technology: "technology",
+  "Communication Services": "communication",
+  "Financial Services ": "financial",
   "Consumer Cyclical": "Consumer Cyclical",
-  "Financial Services ": "Financial Services",
   "Consumer Defensive": "Consumer Defensive",
-  Healthcare: "Healthcare",
-  Technology: "Technology",
 };
 
 export const currencyBadgeEnum = {

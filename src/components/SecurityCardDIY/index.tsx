@@ -27,10 +27,9 @@ const SecurityCard = () => {
       />
       <div className={styles.propsContainer}>
         <StockProp name="CEO" value={stock.ceo} />
-        <StockProp name="Дивиденды" />
+        <StockProp name="Дивиденды" value={lastDiv} />
         <StockProp name="Сплит" />
         <StockProp name="Биржа" value={exchange} />
-        <StockProp name="Последние дивиденды" value={lastDiv} />
         <StockProp name="Отрасль" value={stock.sector} />
         <StockProp name="Рыночная капитализация" value={mktCap} />
       </div>
