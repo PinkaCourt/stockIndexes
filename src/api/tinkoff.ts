@@ -23,12 +23,14 @@ const services = {
 };
 
 const params = (token: string, body: any) => {
+  const headers = new Headers();
+
+  headers.append("Content-Type", "application/json");
+  headers.append("Accept", "application/json");
+  headers.append("Authorization", `Bearer ${token}`);
+
   return {
-    headers: [
-      ["Authorization", `Bearer ${token}`],
-      ["Accept", "application/json"],
-      ["Content-Type", "application/json"],
-    ],
+    headers: headers,
     method: "post",
     body: JSON.stringify(body),
   };

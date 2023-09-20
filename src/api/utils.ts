@@ -16,7 +16,7 @@ export function deserialize(response: Response) {
   return handleBodyParse(response.json());
 }
 
-function deriveDataFromJson<T>(data: { payload: T } | T): T {
+function deriveDataFromJson<T extends object>(data: { payload: T } | T): T {
   if ("payload" in data) {
     return data.payload;
   }
