@@ -1,5 +1,5 @@
 .header {
-  height: 100px;
+  height: 80px;
   width: auto;
   display: flex;
   justify-content: space-between;
@@ -19,10 +19,11 @@
 }
 
 .title {
+  color: black;
 }
 
 .link {
   text-decoration: none;
-  color: black;
+  color: gray;
   cursor: pointer;
 }
