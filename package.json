@@ -37,7 +37,10 @@
     "extends": [
       "react-app",
       "react-app/jest"
-    ]
+    ],
+    "rules": {
+      "react/react-in-jsx-scope": "off"
+    }
   },
   "browserslist": {
     "production": [
@@ -54,6 +57,6 @@
   "devDependencies": {
     "@types/react-router-dom": "^5.3.2",
     "electron": "^26.2.1",
-    "node-sass": "^7.0.1"
+    "node-sass": "^9.0.0"
   }
 }
