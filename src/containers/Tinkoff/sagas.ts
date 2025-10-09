@@ -2,27 +2,33 @@ import { call, put, select, takeEvery } from "redux-saga/effects";
 
 import { selectTinkoffToken } from "containers/UserData/selectors";
 import { setTinkoffToken } from "containers/UserData/reducer";
-import { getBrokerAccountId, getPortfolio, getAllStocks } from "api/tinkoff";
+import {
+  getBrokerAccountId,
+  getPortfolio,
+  getAllStocks,
+  getAllBonds,
+} from "api/tinkoff";
 import * as A from "./actions";
 import * as T from "./types";
 
 function* getTFAccountId() {
   const token: ReturnType<typeof selectTinkoffToken> = yield select(
-    selectTinkoffToken
+    selectTinkoffToken,
   );
 
   const { accounts } = yield call(getBrokerAccountId, token);
-  // TODO сделать выбор по счету а не хардкодить первый
+  // TODO! сделать выбор по счету а не хардкодить первый
   if (accounts.length > 0) {
     yield put(A.setTFAccountId(accounts[0].id));
     yield put(A.getTFPortfolio(accounts[0].id));
     yield put(A.getAllStocks());
+    yield put(A.getAllBonds());
   }
 }
 
 function* getTFPortfolio({ payload }: ReturnType<typeof A.getTFPortfolio>) {
   const token: ReturnType<typeof selectTinkoffToken> = yield select(
-    selectTinkoffToken
+    selectTinkoffToken,
   );
 
   const {
@@ -57,7 +63,7 @@ function* getTFPortfolio({ payload }: ReturnType<typeof A.getTFPortfolio>) {
         accum[current.figi] = current;
         return accum;
       },
-      {} as T.PositionMap
+      {} as T.PositionMap,
     );
 
     yield put(A.setTFPortfolio(positionMap));
@@ -68,7 +74,7 @@ function* getTFPortfolio({ payload }: ReturnType<typeof A.getTFPortfolio>) {
 
 function* getAllStocksServer() {
   const token: ReturnType<typeof selectTinkoffToken> = yield select(
-    selectTinkoffToken
+    selectTinkoffToken,
   );
 
   const { instruments } = yield call(getAllStocks, token);
@@ -79,9 +85,29 @@ function* getAllStocksServer() {
         accum[current.ticker] = current;
         return accum;
       },
-      {} as T.InstrumentMap
+      {} as T.InstrumentMap,
     );
     yield put(A.setAllStocks(instrumentMap));
+  }
+}
+
+function* getAllBondsServer() {
+  const token: ReturnType<typeof selectTinkoffToken> = yield select(
+    selectTinkoffToken,
+  );
+
+  const { instruments } = yield call(getAllBonds, token);
+
+  if (instruments) {
+    const instrumentMap: T.InstrumentMap = instruments.reduce(
+      (accum: any, current: T.Instrument) => {
+        accum[current.ticker] = current;
+        return accum;
+      },
+      {} as T.InstrumentMap,
+    );
+
+    yield put(A.setAllBonds(instrumentMap));
   }
 }
 
@@ -89,4 +115,5 @@ export default function* tinkoffSaga() {
   yield takeEvery(setTinkoffToken, getTFAccountId);
   yield takeEvery(A.getTFPortfolio, getTFPortfolio);
   yield takeEvery(A.getAllStocks, getAllStocksServer);
+  yield takeEvery(A.getAllBonds, getAllBondsServer);
 }

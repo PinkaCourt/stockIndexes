@@ -6,8 +6,9 @@ const baseURLExchangeRates = "https://www.cbr-xml-daily.ru/daily_json.js";
 export const getExchangeRates = () => {
   return fetchRequest<RawRates>(baseURLExchangeRates);
 };
-
-const financialmodelingprepURL = "https://financialmodelingprep.com/api/v3/";
+//todo апи поменялось и теперь часть по приватке
+// const financialmodelingprepURL = "https://financialmodelingprep.com/api/v3/";
+const financialmodelingprepURL = "https://financialmodelingprep.com/stable/";
 const TOKEN = "d436d494b581048e94f7391c30ebc049";
 const baseURLStockScreener = financialmodelingprepURL + "stock-screener?";
 

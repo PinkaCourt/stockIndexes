@@ -1,6 +1,6 @@
 import React from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Table from "@mui/material/Table";
+import { TableFooter, Table } from "@mui/material/";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import TableCell from "@mui/material/TableCell";
@@ -13,6 +13,8 @@ import {
   selectDirection,
   selectOrderBy,
   selectSortedTFPortfolio,
+  ruStocksTotal,
+  ruBondsTotal,
 } from "containers/Tinkoff/selectors";
 import { setDirectionTF, setOrderByTF } from "containers/Tinkoff/actions";
 import { OrderByTF } from "containers/Tinkoff/types";
@@ -25,6 +27,8 @@ const TinkoffTable = () => {
   const securities = useSelector(selectSortedTFPortfolio);
   const direction = useSelector(selectDirection);
   const orderBy = useSelector(selectOrderBy);
+  const ruTotal = useSelector(ruStocksTotal);
+  const ruBonds = useSelector(ruBondsTotal);
 
   const dispatch = useDispatch();
 
@@ -103,9 +107,27 @@ const TinkoffTable = () => {
                   {averagePositionPrice}, {currency}
                 </TableCell>
               </TableRow>
-            )
+            ),
           )}
         </TableBody>
+        <TableFooter>
+          <TableRow>
+            <TableCell>{"Рублевые акции Итого"}</TableCell>
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell>{ruTotal}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>{"Рублевые облигации Итого"}</TableCell>
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell>{ruBonds}</TableCell>
+          </TableRow>
+        </TableFooter>
       </Table>
       {openCard && <SecurityCardDIY />}
     </>

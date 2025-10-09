@@ -1,6 +1,9 @@
 import { fetchRequest } from "api/utils";
 import { Accounts, Positions, Instruments } from "containers/Tinkoff/types";
-import { INSTRUMENT_STATUS_UNSPECIFIED } from "common/constants";
+import {
+  INSTRUMENT_STATUS_UNSPECIFIED,
+  INSTRUMENT_STATUS_BASE,
+} from "common/constants";
 
 const serverURL = "https://invest-public-api.tinkoff.ru/rest";
 const V1 = "/tinkoff.public.invest.api.contract.v1";
@@ -19,6 +22,7 @@ const services = {
   },
   instrumentsService: {
     getShares: ".InstrumentsService/Shares",
+    getBonds: ".InstrumentsService/Bonds",
   },
 };
 
@@ -59,6 +63,17 @@ export const getAllStocks = (token: string) => {
     url,
     params(token, {
       instrumentStatus: INSTRUMENT_STATUS_UNSPECIFIED,
-    })
+    }),
+  );
+};
+
+export const getAllBonds = (token: string) => {
+  const url = baseURL + services.instrumentsService.getBonds;
+
+  return fetchRequest<Instruments>(
+    url,
+    params(token, {
+      instrumentStatus: INSTRUMENT_STATUS_BASE,
+    }),
   );
 };

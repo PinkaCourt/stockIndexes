@@ -10,6 +10,6 @@ export default function* initSaga() {
   yield fork(exchangeRatesWatcher);
   yield fork(tinkoffSaga);
   yield fork(moexWatcher);
-  yield fork(sp500Watcher);
+  // yield fork(sp500Watcher); //todo! убираем это потому что оно сломано а мне не нужно уже
   yield fork(stockProfileWatcher);
 }

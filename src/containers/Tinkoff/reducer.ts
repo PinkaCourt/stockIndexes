@@ -8,6 +8,7 @@ export interface InitState {
   brokerAccountId: string;
   portfolio: T.PositionMap | null;
   allStocks: T.InstrumentMap | null;
+  allTinkBonds: T.InstrumentMap | null;
   direction: Direction;
   orderBy: T.OrderByTF;
   balance: T.Balance | null;
@@ -17,6 +18,7 @@ const initState: InitState = {
   brokerAccountId: "",
   portfolio: null,
   allStocks: null,
+  allTinkBonds: null,
   direction: "asc",
   orderBy: "name",
   balance: null,
@@ -31,6 +33,9 @@ export default createReducer(initState, (builder) => {
   });
   builder.addCase(A.setAllStocks, (state, { payload }) => {
     state.allStocks = payload;
+  });
+  builder.addCase(A.setAllBonds, (state, { payload }) => {
+    state.allTinkBonds = payload;
   });
   builder.addCase(A.setDirectionTF, (state, { payload }) => {
     state.direction = payload;

@@ -58,7 +58,6 @@ const SP500 = () => {
   };
 
   const handleOpenCard = (symbol: string) => {
-    console.log(sortedStocksSP500);
     if (!symbol) return;
     setOpenCard((prevState) => {
       return !prevState;
@@ -107,7 +106,7 @@ const SP500 = () => {
                 <TableCell>{balance}</TableCell>
                 <TableCell>{toBuy}</TableCell>
               </TableRow>
-            )
+            ),
           )}
         </TableBody>
         <TableFooter>

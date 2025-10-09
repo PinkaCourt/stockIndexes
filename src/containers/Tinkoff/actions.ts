@@ -12,6 +12,9 @@ export const setTFPortfolio = createAction<T.PositionMap>("setTFPortfolio");
 export const getAllStocks = createAction("getAllStocks");
 export const setAllStocks = createAction<T.InstrumentMap>("setAllStocks");
 
+export const getAllBonds = createAction("getAllBonds");
+export const setAllBonds = createAction<T.InstrumentMap>("setAllBonds");
+
 export const tinkoffIsDone = createAction("tinkoffDone");
 
 export const setDirectionTF = createAction<Direction>("setDirectionTF");
