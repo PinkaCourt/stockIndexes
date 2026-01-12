@@ -1,4 +1,4 @@
-name: Deploy to GitHub-Pages
+name: Deploy React App to GitHub Pages
 
 on:
   push:
@@ -9,6 +9,9 @@ jobs:
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
 
     steps:
       - name: Checkout
@@ -23,12 +26,10 @@ jobs:
         run: npm ci
 
       - name: Build project
-        run: react-scripts build
+        run: npm run build
 
-      - name: Deploy
+      - name: Deploy to GitHub Pages
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          folder: ./build
           branch: gh-pages
-          single-commit: true
+          folder: build
